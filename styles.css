@@ -1,0 +1,63 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+    margin: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+.dashboard {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.controls {
+    margin: 20px auto;
+}
+
+.toggle {
+    margin: 10px auto;
+}
+
+.toggle button {
+    padding: 8px 16px;
+    margin: 0 5px;
+    background-color: #7f8c8d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.toggle button.active {
+    background-color: #2ecc71;
+}
+
+.toggle button:hover {
+    background-color: #95a5a6;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5 px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+canvas {
+    margin: 0 auto;
+}
