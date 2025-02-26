@@ -36,7 +36,7 @@ const colors = {
         'DMK': '#ff2e17',     // Red
         'AIADMK': '#27ae60',  // Green
         'INC': '#3498db',     // Sky Blue
-        'VCK': '#2e3adc'      // Blue
+        'VCK': '#2e3adc',      // Blue
         'BJP': '#f1c40f',     // Orange
         'CPI': '#d53f37',     // Dark red
         'CPI(M)': '#72251c',  // Brownish red
@@ -109,12 +109,11 @@ fetch('tamilnadu_constituencies.geojson')
         console.log('GeoJSON loaded:', data.features.length, 'features');
         geoJsonLayer = L.geoJSON(data, {
             style: function(feature) {
-                console.log('Rendering:', feature.properties.parliame_1);
                 return {
                     color: "#ff6b6b",
                     weight: 2,
-                    fillColor: "#4ecdc4",
-                    fillOpacity: 0.5
+                    fillColor: "#4ecdc4", // Default color until updateMap runs
+                    fillOpacity: 0.7
                 };
             },
             onEachFeature: function(feature, layer) {
@@ -122,6 +121,7 @@ fetch('tamilnadu_constituencies.geojson')
             }
         }).addTo(map);
         map.fitBounds(geoJsonLayer.getBounds());
+        updateMap(currentElection); // Initial map update
     })
     .catch(err => console.error('GeoJSON error:', err));
 
@@ -129,8 +129,8 @@ fetch('tamilnadu_constituencies.geojson')
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
     if (geoJsonLayer && winners[election]) {
-        geoJsonLayer.setStyle(function(feature) {
-            const constituency = feature.properties.parliame_1;
+        geoJsonLayer.eachLayer(function(layer) {
+            const constituency = layer.feature.properties.parliame_1;
             let party = 'Others';
             for (const [p, constituencies] of Object.entries(winners[election])) {
                 if (constituencies.includes(constituency)) {
@@ -138,13 +138,16 @@ function updateMap(election) {
                     break;
                 }
             }
-            return {
+            layer.setStyle({
                 color: "#ff6b6b",
                 weight: 2,
                 fillColor: colors.parties[party],
                 fillOpacity: 0.7
-            };
+            });
+            layer.bindPopup(`${constituency} - ${party}`);
         });
+    } else {
+        console.log('No winners data for', election);
     }
 }
 
