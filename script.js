@@ -14,10 +14,36 @@ const electionData = {
     lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
 };
 
-// Colors for charts
+// Party winners (simplified for Lok Sabha 2024 - expand later)
+const winners = {
+    lokSabha2024: {
+        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Perambalur', 'Thanjavur', 'Theni', 'Thoothukkudi', 'Tenkasi (SC)'], // Add all 22
+        'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Karur', 'Cuddalore', 'Mayiladuthurai', 'Sivaganga', 'Virudhunagar', 'Tirunelveli', 'Kanniyakumari'], // All 9
+        'CPI': ['Tiruppur', 'Nagapattinam (SC)'],
+        'CPI(M)': ['Dindigul', 'Madurai'],
+        'VCK': ['Viluppuram (SC)', 'Chidambaram (SC)'],
+        'MDMK': ['Tiruchirappalli'],
+        'IUML': ['Ramanathapuram'],
+    }
+    // Add 2014, 2019, etc., from ECI later
+};
+
+// Colors for charts and map
 const colors = {
     background: ['#27ae60', '#c0392b', '#f1c40f', '#3498db', '#e74c3c', '#95a5a6'],
-    border: ['#219653', '#962d22', '#e67e22', '#2980b9', '#c0392b', '#7f8c8d']
+    border: ['#219653', '#962d22', '#e67e22', '#2980b9', '#c0392b', '#7f8c8d'],
+    parties: {
+        'DMK': '#ff2e17',     // Red
+        'AIADMK': '#27ae60',  // Green
+        'INC': '#3498db',     // Sky Blue
+        'VCK': '#2e3adc'      // Blue
+        'BJP': '#f1c40f',     // Orange
+        'CPI': '#d53f37',     // Dark red
+        'CPI(M)': '#72251c',  // Brownish red
+        'MDMK': '#ed8b80',    // Pale red
+        'IUML': '#186839',    // Dark Green
+        'Others': '#95a5a6'   // Grey
+    }
 };
 
 // Initialize chart
@@ -66,6 +92,7 @@ function toggleData(mode) {
 }
 
 // Initialize map
+let geoJsonLayer;
 const map = L.map('map').setView([11.1271, 78.6569], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
@@ -80,7 +107,7 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .then(data => {
         console.log('GeoJSON loaded:', data.features.length, 'features');
-        const geoJsonLayer = L.geoJSON(data, {
+        geoJsonLayer = L.geoJSON(data, {
             style: function(feature) {
                 console.log('Rendering:', feature.properties.parliame_1);
                 return {
@@ -98,9 +125,27 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .catch(err => console.error('GeoJSON error:', err));
 
-// Update map
+// Update map with winners
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
+    if (geoJsonLayer && winners[election]) {
+        geoJsonLayer.setStyle(function(feature) {
+            const constituency = feature.properties.parliame_1;
+            let party = 'Others';
+            for (const [p, constituencies] of Object.entries(winners[election])) {
+                if (constituencies.includes(constituency)) {
+                    party = p;
+                    break;
+                }
+            }
+            return {
+                color: "#ff6b6b",
+                weight: 2,
+                fillColor: colors.parties[party],
+                fillOpacity: 0.7
+            };
+        });
+    }
 }
 
 // Start with 2021 Assembly
