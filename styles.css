@@ -34,10 +34,12 @@ h1 {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .toggle button.active {
     background-color: #2ecc71;
+    transform: scale(1.05); /* Pop when active*/
 }
 
 .toggle button:hover {
@@ -52,12 +54,16 @@ button {
     background-color: #3498db;
     color: white;
     cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 button:hover {
     background-color: #2980b9;
+    transform: scale(1.05); /* Slight grow on hover */
 }
 
 canvas {
     margin: 0 auto;
+    opacity: 1;
+    transition: opacity 0.5s ease; /* Fade in/out for chart */
 }

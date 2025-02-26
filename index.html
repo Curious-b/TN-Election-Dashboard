@@ -1,33 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Tamil Nadu Election Dashboard</title>
-        <link rel="stylesheet" href="styles.css">
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
-    <body>
-        <h1>Tamil Nadu Election Dashboard</h1>
-        <p>Explore election results over the years!</p>
-        
-        <div class="controls">
-            <button onclick="updateChart('assembly2011')">AE 2011</button>
-            <button onclick="updateChart('assembly2016')">AE 2016</button>
-            <button onclick="updateChart('assembly2021')">AE 2021</button>
-            <button onclick="updateChart('lokSabha2014')">GE 2014</button>
-            <button onclick="updateChart('lokSabha2019')">GE 2019</button>
-            <button onclick="updateChart('lokSabha2024')">GE 2024</button>
+<head>
+    <meta charset="UTF-8">
+    <title>Tamil Nadu Election Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+</head>
+<body>
+    <h1>Tamil Nadu Election Dashboard</h1>
+    <p>Explore election results over the years!</p>
+    
+    <div class="controls">
+        <button onclick="updateChart('assembly2011')">Assembly 2011</button>
+        <button onclick="updateChart('assembly2016')">Assembly 2016</button>
+        <button onclick="updateChart('assembly2021')">Assembly 2021</button>
+        <button onclick="updateChart('lokSabha2014')">Lok Sabha 2014</button>
+        <button onclick="updateChart('lokSabha2019')">Lok Sabha 2019</button>
+        <button onclick="updateChart('lokSabha2024')">Lok Sabha 2024</button>
+    </div>
+    
+    <div class="dashboard">
+        <h2 id="chartTitle">2021 Assembly Election Results</h2>
+        <div class="toggle">
+            <button onclick="toggleData('seats')" class="active">Seats Won</button>
+            <button onclick="toggleData('vote')">Vote %</button>
         </div>
-
-        <div class="dashboard">
-            <h2 id="chartTitle">2021 Assembly Election Results</h2>
-            <div class="toggle">
-                <button onclick="toggleData('seats')" class="active">Seats Won</button>
-                <button onclick="toggleData('vote')">Vote Share</button>
-            </div>
-            <canvas id="electionChart" width="400" height="200"></canvas>
-        </div>
-
-        <script src="script.js"></script>
-    </body>
+        <canvas id="electionChart" width="400" height="200"></canvas>
+        <div id="map" style="height: 400px; margin-top: 20px;"></div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
 </html>
