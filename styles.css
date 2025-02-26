@@ -75,7 +75,11 @@ canvas {
     transition: all 0.2s ease; /* Smooth transition */
 }
 
+@keyframes pulse {
+    0% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); }
+    50% { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 1)); }
+    100% { filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); }
+}
 .leaflet-interactive:hover {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* White glow */
-    z-index: 1000; /* Bring to front */
+    animation: pulse 1.5s infinite;
 }
