@@ -15,11 +15,27 @@ h1 {
     padding: 20px;
     background: white;
     border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .controls {
     margin: 20px auto;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+    transform: scale(1.05);
 }
 
 .toggle {
@@ -30,44 +46,36 @@ h1 {
     padding: 8px 16px;
     margin: 0 5px;
     background-color: #7f8c8d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .toggle button.active {
     background-color: #2ecc71;
-    transform: scale(1.05); /* Pop when active*/
+    transform: scale(1.05);
 }
 
 .toggle button:hover {
     background-color: #95a5a6;
 }
 
-button {
-    padding: 10px 20px;
-    margin: 5 px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3498db;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #2980b9;
-    transform: scale(1.05); /* Slight grow on hover */
-}
-
 canvas {
     margin: 0 auto;
     opacity: 1;
-    transition: opacity 0.5s ease; /* Fade in/out for chart */
+    transition: opacity 0.5s ease;
 }
 
-#map .leaflet-interactive:hover {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* White Glow on hover */
+#map {
+    width: 400px;      /* Portrait: narrower */
+    height: 600px;     /* Portrait: taller */
+    margin: 20px auto; /* Centered */
+}
+
+/* Glow and hover flair */
+.leaflet-interactive {
+    transition: all 0.2s ease; /* Smooth transition */
+}
+
+.leaflet-interactive:hover {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* White glow */
+    z-index: 1000; /* Bring to front */
 }
