@@ -110,7 +110,7 @@ fetch('tamilnadu_constituencies.geojson')
         geoJsonLayer = L.geoJSON(data, {
             style: function(feature) {
                 return {
-                    color: "#ff6b6b",
+                    color: "#333333", // Dark grey borders
                     weight: 2,
                     fillColor: "#4ecdc4", // Default color until updateMap runs
                     fillOpacity: 0.7
@@ -139,7 +139,7 @@ function updateMap(election) {
                 }
             }
             layer.setStyle({
-                color: "#ff6b6b",
+                color: "#333333",
                 weight: 2,
                 fillColor: colors.parties[party],
                 fillOpacity: 0.7
