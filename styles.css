@@ -67,3 +67,7 @@ canvas {
     opacity: 1;
     transition: opacity 0.5s ease; /* Fade in/out for chart */
 }
+
+#map .leaflet-interactive:hover {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8)); /* White Glow on hover */
+}

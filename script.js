@@ -14,18 +14,17 @@ const electionData = {
     lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
 };
 
-// Party winners (simplified for Lok Sabha 2024 - expand later)
+// Party winners for Lok Sabha 2024 (full list from ECI)
 const winners = {
     lokSabha2024: {
-        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Perambalur', 'Thanjavur', 'Theni', 'Thoothukkudi', 'Tenkasi (SC)'], // Add all 22
-        'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Karur', 'Cuddalore', 'Mayiladuthurai', 'Sivaganga', 'Virudhunagar', 'Tirunelveli', 'Kanniyakumari'], // All 9
+        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Perambalur', 'Thanjavur', 'Theni', 'Thoothukkudi', 'Tenkasi (SC)'],
+        'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Karur', 'Cuddalore', 'Mayiladuthurai', 'Sivaganga', 'Virudhunagar', 'Tirunelveli', 'Kanniyakumari'],
         'CPI': ['Tiruppur', 'Nagapattinam (SC)'],
         'CPI(M)': ['Dindigul', 'Madurai'],
         'VCK': ['Viluppuram (SC)', 'Chidambaram (SC)'],
         'MDMK': ['Tiruchirappalli'],
-        'IUML': ['Ramanathapuram'],
+        'IUML': ['Ramanathapuram']
     }
-    // Add 2014, 2019, etc., from ECI later
 };
 
 // Colors for charts and map
@@ -36,7 +35,7 @@ const colors = {
         'DMK': '#ff2e17',     // Red
         'AIADMK': '#27ae60',  // Green
         'INC': '#3498db',     // Sky Blue
-        'VCK': '#2e3adc',      // Blue
+        'VCK': '#2e3adc',     // Blue
         'BJP': '#f1c40f',     // Orange
         'CPI': '#d53f37',     // Dark red
         'CPI(M)': '#72251c',  // Brownish red
@@ -109,15 +108,59 @@ fetch('tamilnadu_constituencies.geojson')
         console.log('GeoJSON loaded:', data.features.length, 'features');
         geoJsonLayer = L.geoJSON(data, {
             style: function(feature) {
+                const constituency = feature.properties.parliame_1;
+                let party = 'Others';
+                if (winners[currentElection]) {
+                    for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+                        if (constituencies.includes(constituency)) {
+                            party = p;
+                            break;
+                        }
+                    }
+                }
                 return {
                     color: "#333333", // Dark grey borders
                     weight: 2,
-                    fillColor: "#4ecdc4", // Default color until updateMap runs
+                    fillColor: colors.parties[party],
                     fillOpacity: 0.7
                 };
             },
             onEachFeature: function(feature, layer) {
-                layer.bindPopup(feature.properties.parliame_1 || 'Unknown');
+                const constituency = feature.properties.parliame_1;
+                let party = 'Others';
+                if (winners[currentElection]) {
+                    for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+                        if (constituencies.includes(constituency)) {
+                            party = p;
+                            break;
+                        }
+                    }
+                }
+                layer.bindPopup(`${constituency} - ${party}`);
+                // Hover effects with glow
+                layer.on({
+                    mouseover: function() {
+                        layer.setStyle({
+                            weight: 4,              // Thicker border
+                            color: "#000000",       // Black on hover
+                            fillOpacity: 0.9,       // Brighter fill
+                            dashArray: '5, 5',      // Dashed "pulse" effect
+                            shadowBlur: 10,         // Glow (Leaflet doesn’t support directly, see CSS)
+                            shadowColor: '#ffffff'  // White glow (simulated)
+                        });
+                    },
+                    mouseout: function() {
+                        const party = Object.entries(winners[currentElection] || {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
+                        layer.setStyle({
+                            weight: 2,
+                            color: "#333333",       // Back to dark grey
+                            fillColor: colors.parties[party],
+                            fillOpacity: 0.7,
+                            dashArray: '',          // Reset dash
+                            shadowBlur: 0           // Remove glow
+                        });
+                    }
+                });
             }
         }).addTo(map);
         map.fitBounds(geoJsonLayer.getBounds());
@@ -142,12 +185,24 @@ function updateMap(election) {
                 color: "#333333",
                 weight: 2,
                 fillColor: colors.parties[party],
-                fillOpacity: 0.7
+                fillOpacity: 0.7,
+                dashArray: '',
+                shadowBlur: 0
             });
             layer.bindPopup(`${constituency} - ${party}`);
         });
     } else {
         console.log('No winners data for', election);
+        geoJsonLayer.eachLayer(function(layer) {
+            layer.setStyle({
+                color: "#333333",
+                weight: 2,
+                fillColor: "#4ecdc4", // Default teal
+                fillOpacity: 0.7,
+                dashArray: '',
+                shadowBlur: 0
+            });
+        });
     }
 }
 
