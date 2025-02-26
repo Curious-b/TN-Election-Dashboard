@@ -137,25 +137,19 @@ fetch('tamilnadu_constituencies.geojson')
                     }
                 }
                 layer.bindPopup(`${constituency} - ${party}`);
-                // Hover effects with flair
+                // Hover effects without thick borders
                 layer.on({
                     mouseover: function() {
                         layer.setStyle({
-                            weight: 4,              // Thicker border
-                            color: "#000000",       // Black border
-                            fillOpacity: 0.9,       // Brighter fill
-                            dashArray: '5, 5'       // Dashed pulse
+                            fillOpacity: 0.9 // Brighter fill only
                         });
-                        layer.bringToFront();      // Lift to top
+                        layer.bringToFront();
                     },
                     mouseout: function() {
                         const party = Object.entries(winners[currentElection] || {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
                         layer.setStyle({
-                            weight: 2,
-                            color: "#333333",
                             fillColor: colors.parties[party],
-                            fillOpacity: 0.7,
-                            dashArray: ''
+                            fillOpacity: 0.7
                         });
                     }
                 });
@@ -183,8 +177,7 @@ function updateMap(election) {
                 color: "#333333",
                 weight: 2,
                 fillColor: colors.parties[party],
-                fillOpacity: 0.7,
-                dashArray: ''
+                fillOpacity: 0.7
             });
             layer.bindPopup(`${constituency} - ${party}`);
         });
@@ -195,8 +188,7 @@ function updateMap(election) {
                 color: "#333333",
                 weight: 2,
                 fillColor: "#4ecdc4",
-                fillOpacity: 0.7,
-                dashArray: ''
+                fillOpacity: 0.7
             });
         });
     }
