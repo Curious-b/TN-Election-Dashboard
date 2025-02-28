@@ -50,7 +50,7 @@ const colors = {
         'AIADMK': '#27ae60',  // Green
         'INC': '#3498db',     // Sky Blue
         'VCK': '#2e3adc',     // Blue
-        'BJP': '#f1c40f',     // Orange
+        'BJP': '#ff6f00',     // Orange
         'CPI': '#d53f37',     // Dark red
         'CPI(M)': '#72251c',  // Brownish red
         'MDMK': '#ed8b80',    // Pale red
