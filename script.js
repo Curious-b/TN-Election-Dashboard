@@ -16,6 +16,20 @@ const electionData = {
 
 // Party winners for Lok Sabha 2024 (full list from ECI)
 const winners = {
+    loksabha2014: {
+        'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli', 'Kanniyakumari'],
+        'PMK': ['Dharmapuri'],
+        'BJP': ['Kanniyakumari']
+    }
+    loksabha2019: {
+        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Pollachi', 'Dindigul', 'Perambalur', 'Cuddalore', 'Mayiladuthurai', 'Thanjavur', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
+        'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Arani', 'Karur', 'Tiruchirappalli', 'Sivaganga', 'Virudhunagar', 'Kanniyakumari'],
+        'CPI': ['Tiruppur', 'Nagapattinam (SC)'],
+        'CPI(M)': ['Coimbatore', 'Madurai'],
+        'VCK': ['Chidambaram (SC)'],
+        'IUML': ['Ramanathapuram'],
+        'AIADMK': ['Theni']
+    }
     lokSabha2024: {
         'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Perambalur', 'Thanjavur', 'Theni', 'Thoothukkudi', 'Tenkasi (SC)'],
         'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Karur', 'Cuddalore', 'Mayiladuthurai', 'Sivaganga', 'Virudhunagar', 'Tirunelveli', 'Kanniyakumari'],
