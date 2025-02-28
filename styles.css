@@ -30,23 +30,25 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: transform 0.2s ease, background-color 0.3s ease;
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 button:hover {
-    background-color: #2980b9;
-    transform: scale(1.05);
-    animation: pulseButton 0.5s infinite;
+    background-color: #1abc9c; /* Teal shift */
+    transform: translateY(-3px); /* Bounce up */
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8); /* Blue glow */
+    animation: bounceButton 0.5s infinite; /* Bouncy pulse */
 }
 
 button:active {
-    transform: scale(0.95);
+    transform: translateY(1px); /* Sink on click */
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5); /* Dim glow */
 }
 
-@keyframes pulseButton {
-    0% { transform: scale(1.05); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1.05); }
+@keyframes bounceButton {
+    0% { transform: translateY(-3px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(-3px); }
 }
 
 .toggle {
@@ -57,21 +59,25 @@ button:active {
     padding: 8px 16px;
     margin: 0 5px;
     background-color: #7f8c8d;
-    transition: transform 0.2s ease, background-color 0.3s ease;
+    transition: transform 0.2s ease, background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .toggle button.active {
     background-color: #2ecc71;
-    transform: scale(1.05);
+    transform: translateY(-3px);
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
 }
 
 .toggle button:hover {
     background-color: #95a5a6;
-    animation: pulseButton 0.5s infinite;
+    transform: translateY(-3px);
+    box-shadow: 0 0 10px rgba(149, 165, 166, 0.8); /* Grey glow */
+    animation: bounceButton 0.5s infinite;
 }
 
 .toggle button:active {
-    transform: scale(0.95);
+    transform: translateY(1px);
+    box-shadow: 0 0 5px rgba(149, 165, 166, 0.5);
 }
 
 canvas {
@@ -81,8 +87,8 @@ canvas {
 }
 
 #map {
-    width: 350px;      /* Adjusted to fit Tamil Nadu snugly */
-    height: 2000px;     /* Taller to match bounds */
+    width: 400px;
+    height: 800px;
     margin: 20px auto;
 }
 
