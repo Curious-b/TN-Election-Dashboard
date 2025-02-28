@@ -81,7 +81,7 @@ canvas {
 }
 
 #map {
-    width: 500px;      /* Adjusted to fit Tamil Nadu snugly */
+    width: 400px;      /* Adjusted to fit Tamil Nadu snugly */
     height: 1000px;     /* Taller to match bounds */
     margin: 20px auto;
 }
