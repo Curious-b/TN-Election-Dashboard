@@ -14,7 +14,7 @@ const electionData = {
     lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
 };
 
-// Party winners from ECI (aggregated for Lok Sabha, placeholder for Assembly)
+// Party winners from ECI (aggregated for both)
 const winners = {
     assembly2011: {
         'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
@@ -139,7 +139,11 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Reset map view function
 function resetMapView() {
-    map.fitBounds(lokSabhaLayer.getBounds(), { duration: 0.5 });
+    if (currentElection.startsWith('lokSabha') && lokSabhaLayer) {
+        map.fitBounds(lokSabhaLayer.getBounds(), { duration: 0.5 });
+    } else if (currentElection.startsWith('assembly') && assemblyLayer) {
+        map.fitBounds(assemblyLayer.getBounds(), { duration: 0.5 });
+    }
 }
 
 // Load Lok Sabha GeoJSON
@@ -205,7 +209,6 @@ fetch('tamilnadu_constituencies.geojson')
                 });
             }
         }).addTo(map);
-        map.fitBounds(lokSabhaLayer.getBounds());
 
         // Load Assembly GeoJSON
         console.log('Loading Assembly GeoJSON...');
@@ -218,7 +221,7 @@ fetch('tamilnadu_constituencies.geojson')
                 console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
                 assemblyLayer = L.geoJSON(data, {
                     style: function(feature) {
-                        const constituency = feature.properties.assembly_c; // Use "assembly_c" from your GeoJSON
+                        const constituency = feature.properties.assembly_c;
                         let party = 'Others';
                         if (winners[currentElection] && currentElection.startsWith('assembly')) {
                             for (const [p, constituencies] of Object.entries(winners[currentElection])) {
@@ -232,7 +235,7 @@ fetch('tamilnadu_constituencies.geojson')
                             color: "#666666",
                             weight: 1,
                             fillColor: colors.parties[party],
-                            fillOpacity: 0.4
+                            fillOpacity: 0.7
                         };
                     },
                     onEachFeature: function(feature, layer) {
@@ -256,7 +259,7 @@ fetch('tamilnadu_constituencies.geojson')
                         layer.on({
                             mouseover: function() {
                                 layer.setStyle({
-                                    fillOpacity: 0.6
+                                    fillOpacity: 0.9
                                 });
                                 layer.bringToFront();
                             },
@@ -264,13 +267,23 @@ fetch('tamilnadu_constituencies.geojson')
                                 const party = Object.entries(winners[currentElection] && currentElection.startsWith('assembly') ? winners[currentElection] : {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
                                 layer.setStyle({
                                     fillColor: colors.parties[party],
-                                    fillOpacity: 0.4
+                                    fillOpacity: 0.7
                                 });
                             }
                         });
                     }
-                }).addTo(map);
+                });
+
+                // Initial toggle - Assembly 2021 starts visible
+                if (currentElection.startsWith('assembly')) {
+                    assemblyLayer.addTo(map);
+                    map.fitBounds(assemblyLayer.getBounds());
+                } else {
+                    lokSabhaLayer.addTo(map);
+                    map.fitBounds(lokSabhaLayer.getBounds());
+                }
                 updateMap(currentElection);
+
                 const resetButton = document.createElement('button');
                 resetButton.textContent = 'Reset View';
                 resetButton.className = 'reset-button';
@@ -281,64 +294,70 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .catch(err => console.error('Lok Sabha GeoJSON error:', err));
 
-// Update map with winners
+// Update map with winners and toggle layers
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
-    if (lokSabhaLayer) {
-        lokSabhaLayer.eachLayer(function(layer) {
-            const constituency = layer.feature.properties.parliame_1;
-            let party = 'Others';
-            let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
-            if (winners[election] && election.startsWith('lokSabha')) {
-                for (const [p, constituencies] of Object.entries(winners[election])) {
-                    if (constituencies.includes(constituency)) {
-                        party = p;
-                        vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
-                        break;
+    if (lokSabhaLayer && assemblyLayer) {
+        if (election.startsWith('lokSabha')) {
+            if (map.hasLayer(assemblyLayer)) map.removeLayer(assemblyLayer);
+            if (!map.hasLayer(lokSabhaLayer)) lokSabhaLayer.addTo(map);
+            lokSabhaLayer.eachLayer(function(layer) {
+                const constituency = layer.feature.properties.parliame_1;
+                let party = 'Others';
+                let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
+                if (winners[election]) {
+                    for (const [p, constituencies] of Object.entries(winners[election])) {
+                        if (constituencies.includes(constituency)) {
+                            party = p;
+                            vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
+                            break;
+                        }
                     }
                 }
-            }
-            layer.setStyle({
-                color: "#333333",
-                weight: 2,
-                fillColor: colors.parties[party],
-                fillOpacity: 0.7
+                layer.setStyle({
+                    color: "#333333",
+                    weight: 2,
+                    fillColor: colors.parties[party],
+                    fillOpacity: 0.7
+                });
+                layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -10]
+                });
             });
-            layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
-                permanent: false,
-                direction: 'top',
-                offset: [0, -10]
-            });
-        });
-    }
-    if (assemblyLayer) {
-        assemblyLayer.eachLayer(function(layer) {
-            const constituency = layer.feature.properties.assembly_c;
-            let party = 'Others';
-            let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
-            if (winners[election] && election.startsWith('assembly')) {
-                for (const [p, constituencies] of Object.entries(winners[election])) {
-                    if (constituencies.includes(constituency)) {
-                        party = p;
-                        vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
-                        break;
+            map.fitBounds(lokSabhaLayer.getBounds());
+        } else if (election.startsWith('assembly')) {
+            if (map.hasLayer(lokSabhaLayer)) map.removeLayer(lokSabhaLayer);
+            if (!map.hasLayer(assemblyLayer)) assemblyLayer.addTo(map);
+            assemblyLayer.eachLayer(function(layer) {
+                const constituency = layer.feature.properties.assembly_c;
+                let party = 'Others';
+                let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
+                if (winners[election]) {
+                    for (const [p, constituencies] of Object.entries(winners[election])) {
+                        if (constituencies.includes(constituency)) {
+                            party = p;
+                            vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
+                            break;
+                        }
                     }
                 }
-            }
-            layer.setStyle({
-                color: "#666666",
-                weight: 1,
-                fillColor: colors.parties[party],
-                fillOpacity: 0.4
+                layer.setStyle({
+                    color: "#666666",
+                    weight: 1,
+                    fillColor: colors.parties[party],
+                    fillOpacity: 0.7
+                });
+                layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -10]
+                });
             });
-            layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
-                permanent: false,
-                direction: 'top',
-                offset: [0, -10]
-            });
-        });
-    }
-    if (!lokSabhaLayer || !assemblyLayer) {
+            map.fitBounds(assemblyLayer.getBounds());
+        }
+    } else {
         console.log('One or both layers not loaded yet');
     }
 }
