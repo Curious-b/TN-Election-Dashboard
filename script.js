@@ -14,10 +14,10 @@ const electionData = {
     lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
 };
 
-// Party winners for Lok Sabha 2024 (full list from ECI)
+// Party winners from ECI
 const winners = {
     lokSabha2014: {
-        'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli', 'Kanniyakumari'],
+        'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
         'PMK': ['Dharmapuri'],
         'BJP': ['Kanniyakumari']
     },
@@ -55,6 +55,7 @@ const colors = {
         'CPI(M)': '#72251c',  // Brownish red
         'MDMK': '#ed8b80',    // Pale red
         'IUML': '#186839',    // Dark Green
+        'PMK': '#f4d03f',     // Yellow (added for 2014)
         'Others': '#95a5a6'   // Grey
     }
 };
@@ -151,11 +152,10 @@ fetch('tamilnadu_constituencies.geojson')
                     }
                 }
                 layer.bindPopup(`${constituency} - ${party}`);
-                // Hover effects without thick borders
                 layer.on({
                     mouseover: function() {
                         layer.setStyle({
-                            fillOpacity: 0.9 // Brighter fill only
+                            fillOpacity: 0.9
                         });
                         layer.bringToFront();
                     },
@@ -177,14 +177,16 @@ fetch('tamilnadu_constituencies.geojson')
 // Update map with winners
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
-    if (geoJsonLayer && winners[election]) {
+    if (geoJsonLayer) {
         geoJsonLayer.eachLayer(function(layer) {
             const constituency = layer.feature.properties.parliame_1;
             let party = 'Others';
-            for (const [p, constituencies] of Object.entries(winners[election])) {
-                if (constituencies.includes(constituency)) {
-                    party = p;
-                    break;
+            if (winners[election]) {
+                for (const [p, constituencies] of Object.entries(winners[election])) {
+                    if (constituencies.includes(constituency)) {
+                        party = p;
+                        break;
+                    }
                 }
             }
             layer.setStyle({
@@ -196,15 +198,7 @@ function updateMap(election) {
             layer.bindPopup(`${constituency} - ${party}`);
         });
     } else {
-        console.log('No winners data for', election);
-        geoJsonLayer.eachLayer(function(layer) {
-            layer.setStyle({
-                color: "#333333",
-                weight: 2,
-                fillColor: "#4ecdc4",
-                fillOpacity: 0.7
-            });
-        });
+        console.log('GeoJSON layer not loaded yet');
     }
 }
 
