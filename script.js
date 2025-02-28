@@ -78,11 +78,11 @@ function initChart(election, mode) {
             scales: mode === 'seats' ? { y: { beginAtZero: true, title: { display: true, text: 'Number of Seats' } } } : {},
             plugins: {
                 legend: { display: true },
-                tooltip: { enabled: true } // Enable tooltips for hover
+                tooltip: { enabled: true }
             },
             animation: { duration: 1000, easing: 'easeInOutQuad' },
             hover: {
-                mode: ' nearest',
+                mode: 'nearest',
                 intersect: true,
                 animationDuration: 400,
                 onHover: (event, chartElement) => {
@@ -104,9 +104,6 @@ function updateChart(election) {
         document.getElementById('electionChart').style.opacity = 1;
         updateMap(election);
     }, 500);
-    // Add election class to buttons
-    document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('lokSabha2014', 'lokSabha2019', 'lokSabha2024'));
-    document.querySelector(`button[onclick="updateChart('${election}')"]`).classList.add(election);
 }
 
 // Toggle between seats and vote %
@@ -125,6 +122,11 @@ const map = L.map('map').setView([11.1271, 78.6569], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
 }).addTo(map);
+
+// Reset map view function
+function resetMapView() {
+    map.fitBounds(geoJsonLayer.getBounds(), { duration: 0.5 });
+}
 
 // Load TNGIS GeoJSON
 console.log('Loading GeoJSON...');
@@ -157,15 +159,21 @@ fetch('tamilnadu_constituencies.geojson')
             onEachFeature: function(feature, layer) {
                 const constituency = feature.properties.parliame_1;
                 let party = 'Others';
+                let vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(party)] || 'N/A';
                 if (winners[currentElection]) {
                     for (const [p, constituencies] of Object.entries(winners[currentElection])) {
                         if (constituencies.includes(constituency)) {
                             party = p;
+                            vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(party)] || 'N/A';
                             break;
                         }
                     }
                 }
-                layer.bindPopup(`${constituency} - ${party}`);
+                layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                    permanent: false,
+                    direction: 'top',
+                    offset: [0, -10]
+                });
                 layer.on({
                     mouseover: function() {
                         layer.setStyle({
@@ -185,6 +193,12 @@ fetch('tamilnadu_constituencies.geojson')
         }).addTo(map);
         map.fitBounds(geoJsonLayer.getBounds());
         updateMap(currentElection); // Initial map update
+        // Add reset button after map loads
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset View';
+        resetButton.className = 'reset-button';
+        resetButton.onclick = resetMapView;
+        document.querySelector('.dashboard').appendChild(resetButton);
     })
     .catch(err => console.error('GeoJSON error:', err));
 
@@ -195,10 +209,12 @@ function updateMap(election) {
         geoJsonLayer.eachLayer(function(layer) {
             const constituency = layer.feature.properties.parliame_1;
             let party = 'Others';
+            let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
             if (winners[election]) {
                 for (const [p, constituencies] of Object.entries(winners[election])) {
                     if (constituencies.includes(constituency)) {
                         party = p;
+                        vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
                         break;
                     }
                 }
@@ -209,7 +225,11 @@ function updateMap(election) {
                 fillColor: colors.parties[party],
                 fillOpacity: 0.7
             });
-            layer.bindPopup(`${constituency} - ${party}`);
+            layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -10]
+            });
         });
     } else {
         console.log('GeoJSON layer not loaded yet');
