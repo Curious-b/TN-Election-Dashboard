@@ -50,7 +50,7 @@ const colors = {
         'AIADMK': '#27ae60',  // Green
         'INC': '#3498db',     // Sky Blue
         'VCK': '#2e3adc',     // Blue
-        'BJP': '#ff6f00',     // Orange
+        'BJP': '#f1c40f',     // Orange
         'CPI': '#d53f37',     // Dark red
         'CPI(M)': '#72251c',  // Brownish red
         'MDMK': '#ed8b80',    // Pale red
@@ -76,8 +76,19 @@ function initChart(election, mode) {
         },
         options: {
             scales: mode === 'seats' ? { y: { beginAtZero: true, title: { display: true, text: 'Number of Seats' } } } : {},
-            plugins: { legend: { display: true } },
-            animation: { duration: 1000, easing: 'easeInOutQuad' }
+            plugins: {
+                legend: { display: true },
+                tooltip: { enabled: true } // Enable tooltips for hover
+            },
+            animation: { duration: 1000, easing: 'easeInOutQuad' },
+            hover: {
+                mode: ' nearest',
+                intersect: true,
+                animationDuration: 400,
+                onHover: (event, chartElement) => {
+                    event.native.target.style.cursor = chartElement.length ? 'pointer' : 'default';
+                }
+            }
         }
     });
     document.getElementById('chartTitle').textContent = electionData[election].title;
@@ -93,6 +104,9 @@ function updateChart(election) {
         document.getElementById('electionChart').style.opacity = 1;
         updateMap(election);
     }, 500);
+    // Add election class to buttons
+    document.querySelectorAll('.controls button').forEach(btn => btn.classList.remove('lokSabha2014', 'lokSabha2019', 'lokSabha2024'));
+    document.querySelector(`button[onclick="updateChart('${election}')"]`).classList.add(election);
 }
 
 // Toggle between seats and vote %
