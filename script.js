@@ -165,9 +165,6 @@ fetch('tamilnadu_constituencies.geojson')
                             fillColor: colors.parties[party],
                             fillOpacity: 0.7
                         });
-                    },
-                    click: function() {
-                        map.fitBounds(layer.getBounds(), { duration: 0.5 }); // Zoom to constituency
                     }
                 });
             }

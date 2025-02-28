@@ -36,11 +36,11 @@ button {
 button:hover {
     background-color: #2980b9;
     transform: scale(1.05);
-    animation: pulseButton 0.5s infinite; /* Button pulse */
+    animation: pulseButton 0.5s infinite;
 }
 
 button:active {
-    transform: scale(0.95); /* Slight shrink on click */
+    transform: scale(0.95);
 }
 
 @keyframes pulseButton {
@@ -81,8 +81,8 @@ canvas {
 }
 
 #map {
-    width: 400px;
-    height: 750px;
+    width: 500px;      /* Adjusted to fit Tamil Nadu snugly */
+    height: 800px;     /* Taller to match bounds */
     margin: 20px auto;
 }
 
