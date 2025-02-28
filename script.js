@@ -14,8 +14,21 @@ const electionData = {
     lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
 };
 
-// Party winners from ECI
+// Party winners from ECI (aggregated for Lok Sabha, placeholder for Assembly)
 const winners = {
+    assembly2011: {
+        'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
+        'PMK': ['Dharmapuri'],
+        'BJP': ['Kanniyakumari']
+    },
+    assembly2016: {
+        'AIADMK': ['Tiruvallur (SC)', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli', 'Kanniyakumari'],
+        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Vellore']
+    },
+    assembly2021: {
+        'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Pollachi', 'Dindigul', 'Perambalur', 'Cuddalore', 'Mayiladuthurai', 'Thanjavur', 'Thoothukkudi', 'Tenkasi (SC)'],
+        'AIADMK': ['Tiruvallur (SC)', 'Krishnagiri', 'Viluppuram (SC)', 'Tiruppur', 'Coimbatore', 'Karur', 'Tiruchirappalli', 'Chidambaram (SC)', 'Nagapattinam (SC)', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Tirunelveli', 'Kanniyakumari']
+    },
     lokSabha2014: {
         'AIADMK': ['Tiruvallur (SC)', 'Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Krishnagiri', 'Tiruvannamalai', 'Arani', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Tiruppur', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Dindigul', 'Karur', 'Tiruchirappalli', 'Perambalur', 'Cuddalore', 'Chidambaram (SC)', 'Mayiladuthurai', 'Nagapattinam (SC)', 'Thanjavur', 'Sivaganga', 'Madurai', 'Theni', 'Virudhunagar', 'Ramanathapuram', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
         'PMK': ['Dharmapuri'],
@@ -46,17 +59,18 @@ const colors = {
     background: ['#27ae60', '#c0392b', '#f1c40f', '#3498db', '#e74c3c', '#95a5a6'],
     border: ['#219653', '#962d22', '#e67e22', '#2980b9', '#c0392b', '#7f8c8d'],
     parties: {
-        'DMK': '#ff2e17',     // Red
-        'AIADMK': '#27ae60',  // Green
-        'INC': '#3498db',     // Sky Blue
-        'VCK': '#2e3adc',     // Blue
-        'BJP': '#f1c40f',     // Orange
-        'CPI': '#d53f37',     // Dark red
-        'CPI(M)': '#72251c',  // Brownish red
-        'MDMK': '#ed8b80',    // Pale red
-        'IUML': '#186839',    // Dark Green
-        'PMK': '#f4d03f',     // Yellow
-        'Others': '#95a5a6'   // Grey
+        'DMK': '#ff2e17',
+        'AIADMK': '#27ae60',
+        'INC': '#3498db',
+        'VCK': '#2e3adc',
+        'BJP': '#f1c40f',
+        'CPI': '#d53f37',
+        'CPI(M)': '#72251c',
+        'MDMK': '#ed8b80',
+        'IUML': '#186839',
+        'PMK': '#f4d03f',
+        'DMDK': '#f39c12',
+        'Others': '#95a5a6'
     }
 };
 
@@ -117,7 +131,7 @@ function toggleData(mode) {
 }
 
 // Initialize map
-let geoJsonLayer;
+let lokSabhaLayer, assemblyLayer;
 const map = L.map('map').setView([11.1271, 78.6569], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
@@ -125,23 +139,23 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Reset map view function
 function resetMapView() {
-    map.fitBounds(geoJsonLayer.getBounds(), { duration: 0.5 });
+    map.fitBounds(lokSabhaLayer.getBounds(), { duration: 0.5 });
 }
 
-// Load TNGIS GeoJSON
-console.log('Loading GeoJSON...');
+// Load Lok Sabha GeoJSON
+console.log('Loading Lok Sabha GeoJSON...');
 fetch('tamilnadu_constituencies.geojson')
     .then(response => {
-        if (!response.ok) throw new Error('GeoJSON fetch failed: ' + response.status);
+        if (!response.ok) throw new Error('Lok Sabha GeoJSON fetch failed: ' + response.status);
         return response.json();
     })
     .then(data => {
-        console.log('GeoJSON loaded:', data.features.length, 'features');
-        geoJsonLayer = L.geoJSON(data, {
+        console.log('Lok Sabha GeoJSON loaded:', data.features.length, 'features');
+        lokSabhaLayer = L.geoJSON(data, {
             style: function(feature) {
                 const constituency = feature.properties.parliame_1;
                 let party = 'Others';
-                if (winners[currentElection]) {
+                if (winners[currentElection] && currentElection.startsWith('lokSabha')) {
                     for (const [p, constituencies] of Object.entries(winners[currentElection])) {
                         if (constituencies.includes(constituency)) {
                             party = p;
@@ -160,11 +174,11 @@ fetch('tamilnadu_constituencies.geojson')
                 const constituency = feature.properties.parliame_1;
                 let party = 'Others';
                 let vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(party)] || 'N/A';
-                if (winners[currentElection]) {
+                if (winners[currentElection] && currentElection.startsWith('lokSabha')) {
                     for (const [p, constituencies] of Object.entries(winners[currentElection])) {
                         if (constituencies.includes(constituency)) {
                             party = p;
-                            vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(party)] || 'N/A';
+                            vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(p)] || 'N/A';
                             break;
                         }
                     }
@@ -182,7 +196,7 @@ fetch('tamilnadu_constituencies.geojson')
                         layer.bringToFront();
                     },
                     mouseout: function() {
-                        const party = Object.entries(winners[currentElection] || {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
+                        const party = Object.entries(winners[currentElection] && currentElection.startsWith('lokSabha') ? winners[currentElection] : {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
                         layer.setStyle({
                             fillColor: colors.parties[party],
                             fillOpacity: 0.7
@@ -191,26 +205,91 @@ fetch('tamilnadu_constituencies.geojson')
                 });
             }
         }).addTo(map);
-        map.fitBounds(geoJsonLayer.getBounds());
-        updateMap(currentElection); // Initial map update
-        // Add reset button after map loads
-        const resetButton = document.createElement('button');
-        resetButton.textContent = 'Reset View';
-        resetButton.className = 'reset-button';
-        resetButton.onclick = resetMapView;
-        document.querySelector('.dashboard').appendChild(resetButton);
+        map.fitBounds(lokSabhaLayer.getBounds());
+
+        // Load Assembly GeoJSON
+        console.log('Loading Assembly GeoJSON...');
+        fetch('tamilnadu_assembly.geojson')
+            .then(response => {
+                if (!response.ok) throw new Error('Assembly GeoJSON fetch failed: ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
+                assemblyLayer = L.geoJSON(data, {
+                    style: function(feature) {
+                        const constituency = feature.properties.assembly_c; // Use "assembly_c" from your GeoJSON
+                        let party = 'Others';
+                        if (winners[currentElection] && currentElection.startsWith('assembly')) {
+                            for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+                                if (constituencies.includes(constituency)) {
+                                    party = p;
+                                    break;
+                                }
+                            }
+                        }
+                        return {
+                            color: "#666666",
+                            weight: 1,
+                            fillColor: colors.parties[party],
+                            fillOpacity: 0.4
+                        };
+                    },
+                    onEachFeature: function(feature, layer) {
+                        const constituency = feature.properties.assembly_c;
+                        let party = 'Others';
+                        let vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(party)] || 'N/A';
+                        if (winners[currentElection] && currentElection.startsWith('assembly')) {
+                            for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+                                if (constituencies.includes(constituency)) {
+                                    party = p;
+                                    vote = electionData[currentElection]?.vote[electionData[currentElection].labels.indexOf(p)] || 'N/A';
+                                    break;
+                                }
+                            }
+                        }
+                        layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                            permanent: false,
+                            direction: 'top',
+                            offset: [0, -10]
+                        });
+                        layer.on({
+                            mouseover: function() {
+                                layer.setStyle({
+                                    fillOpacity: 0.6
+                                });
+                                layer.bringToFront();
+                            },
+                            mouseout: function() {
+                                const party = Object.entries(winners[currentElection] && currentElection.startsWith('assembly') ? winners[currentElection] : {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
+                                layer.setStyle({
+                                    fillColor: colors.parties[party],
+                                    fillOpacity: 0.4
+                                });
+                            }
+                        });
+                    }
+                }).addTo(map);
+                updateMap(currentElection);
+                const resetButton = document.createElement('button');
+                resetButton.textContent = 'Reset View';
+                resetButton.className = 'reset-button';
+                resetButton.onclick = resetMapView;
+                document.querySelector('.dashboard').appendChild(resetButton);
+            })
+            .catch(err => console.error('Assembly GeoJSON error:', err));
     })
-    .catch(err => console.error('GeoJSON error:', err));
+    .catch(err => console.error('Lok Sabha GeoJSON error:', err));
 
 // Update map with winners
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
-    if (geoJsonLayer) {
-        geoJsonLayer.eachLayer(function(layer) {
+    if (lokSabhaLayer) {
+        lokSabhaLayer.eachLayer(function(layer) {
             const constituency = layer.feature.properties.parliame_1;
             let party = 'Others';
             let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
-            if (winners[election]) {
+            if (winners[election] && election.startsWith('lokSabha')) {
                 for (const [p, constituencies] of Object.entries(winners[election])) {
                     if (constituencies.includes(constituency)) {
                         party = p;
@@ -231,8 +310,36 @@ function updateMap(election) {
                 offset: [0, -10]
             });
         });
-    } else {
-        console.log('GeoJSON layer not loaded yet');
+    }
+    if (assemblyLayer) {
+        assemblyLayer.eachLayer(function(layer) {
+            const constituency = layer.feature.properties.assembly_c;
+            let party = 'Others';
+            let vote = electionData[election]?.vote[electionData[election].labels.indexOf(party)] || 'N/A';
+            if (winners[election] && election.startsWith('assembly')) {
+                for (const [p, constituencies] of Object.entries(winners[election])) {
+                    if (constituencies.includes(constituency)) {
+                        party = p;
+                        vote = electionData[election]?.vote[electionData[election].labels.indexOf(p)] || 'N/A';
+                        break;
+                    }
+                }
+            }
+            layer.setStyle({
+                color: "#666666",
+                weight: 1,
+                fillColor: colors.parties[party],
+                fillOpacity: 0.4
+            });
+            layer.bindTooltip(`${constituency} - ${party} (${vote}%)`, {
+                permanent: false,
+                direction: 'top',
+                offset: [0, -10]
+            });
+        });
+    }
+    if (!lokSabhaLayer || !assemblyLayer) {
+        console.log('One or both layers not loaded yet');
     }
 }
 
