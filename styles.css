@@ -41,7 +41,7 @@ button {
 }
 
 button:hover {
-    background-color: #2980b9;
+    background-color: #1abc9c; /* Teal shift */
     transform: translateY(-3px);
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.8);
     animation: bounceButton 0.5s infinite;
