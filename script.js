@@ -53,7 +53,7 @@ const winners = {
         'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Viluppuram (SC)', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Pollachi', 'Dindigul', 'Perambalur', 'Cuddalore', 'Mayiladuthurai', 'Thanjavur', 'Thoothukkudi', 'Tenkasi (SC)', 'Tirunelveli'],
         'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Arani', 'Karur', 'Tiruchirappalli', 'Sivaganga', 'Virudhunagar', 'Kanniyakumari'],
         'CPI': ['Tiruppur', 'Nagapattinam (SC)'],
-        'CPI(M)': ['Coimbatore', 'Madurai'],
+        'CPI (M)': ['Coimbatore', 'Madurai'],
         'VCK': ['Chidambaram (SC)'],
         'IUML': ['Ramanathapuram'],
         'AIADMK': ['Theni']
@@ -62,7 +62,7 @@ const winners = {
         'DMK': ['Chennai North', 'Chennai South', 'Chennai Central', 'Sriperumbudur', 'Kancheepuram (SC)', 'Arakkonam', 'Vellore', 'Dharmapuri', 'Tiruvannamalai', 'Arani', 'Kallakurichi', 'Salem', 'Namakkal', 'Erode', 'Nilgiris (SC)', 'Coimbatore', 'Pollachi', 'Perambalur', 'Thanjavur', 'Theni', 'Thoothukkudi', 'Tenkasi (SC)'],
         'INC': ['Tiruvallur (SC)', 'Krishnagiri', 'Karur', 'Cuddalore', 'Mayiladuthurai', 'Sivaganga', 'Virudhunagar', 'Tirunelveli', 'Kanniyakumari'],
         'CPI': ['Tiruppur', 'Nagapattinam (SC)'],
-        'CPI(M)': ['Dindigul', 'Madurai'],
+        'CPI (M)': ['Dindigul', 'Madurai'],
         'VCK': ['Viluppuram (SC)', 'Chidambaram (SC)'],
         'MDMK': ['Tiruchirappalli'],
         'IUML': ['Ramanathapuram']
@@ -80,11 +80,14 @@ const colors = {
         'VCK': '#2e3adc',
         'BJP': '#ff7b00',
         'CPI': '#d53f37',
-        'CPI(M)': '#72251c',
+        'CPI (M)': '#72251c',
         'MDMK': '#ed8b80',
         'IUML': '#186839',
         'PMK': '#f4d03f',
         'DMDK': '#f39c12',
+        'PT' : '#3c6315',
+        'AIFB' : '#824e4e',
+        'MNMK' : '#000000',
         'Others': '#95a5a6'
     }
 };
