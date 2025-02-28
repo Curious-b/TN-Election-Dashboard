@@ -55,7 +55,7 @@ const colors = {
         'CPI(M)': '#72251c',  // Brownish red
         'MDMK': '#ed8b80',    // Pale red
         'IUML': '#186839',    // Dark Green
-        'PMK': '#f4d03f',     // Yellow (added for 2014)
+        'PMK': '#f4d03f',     // Yellow
         'Others': '#95a5a6'   // Grey
     }
 };
