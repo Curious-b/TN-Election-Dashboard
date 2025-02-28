@@ -50,7 +50,7 @@ const colors = {
         'AIADMK': '#27ae60',  // Green
         'INC': '#3498db',     // Sky Blue
         'VCK': '#2e3adc',     // Blue
-        'BJP': '#ff6200',     // Orange
+        'BJP': '#f1c40f',     // Orange
         'CPI': '#d53f37',     // Dark red
         'CPI(M)': '#72251c',  // Brownish red
         'MDMK': '#ed8b80',    // Pale red
@@ -165,6 +165,9 @@ fetch('tamilnadu_constituencies.geojson')
                             fillColor: colors.parties[party],
                             fillOpacity: 0.7
                         });
+                    },
+                    click: function() {
+                        map.fitBounds(layer.getBounds(), { duration: 0.5 }); // Zoom to constituency
                     }
                 });
             }

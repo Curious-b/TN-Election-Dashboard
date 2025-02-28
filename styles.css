@@ -30,12 +30,23 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #2980b9;
     transform: scale(1.05);
+    animation: pulseButton 0.5s infinite; /* Button pulse */
+}
+
+button:active {
+    transform: scale(0.95); /* Slight shrink on click */
+}
+
+@keyframes pulseButton {
+    0% { transform: scale(1.05); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1.05); }
 }
 
 .toggle {
@@ -46,7 +57,7 @@ button:hover {
     padding: 8px 16px;
     margin: 0 5px;
     background-color: #7f8c8d;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: transform 0.2s ease, background-color 0.3s ease;
 }
 
 .toggle button.active {
@@ -56,6 +67,11 @@ button:hover {
 
 .toggle button:hover {
     background-color: #95a5a6;
+    animation: pulseButton 0.5s infinite;
+}
+
+.toggle button:active {
+    transform: scale(0.95);
 }
 
 canvas {
@@ -65,14 +81,14 @@ canvas {
 }
 
 #map {
-    width: 400px;      /* Portrait: narrower */
-    height: 600px;     /* Portrait: taller */
-    margin: 20px auto; /* Centered */
+    width: 400px;
+    height: 750px;
+    margin: 20px auto;
 }
 
 /* Glow and hover flair */
 .leaflet-interactive {
-    transition: fill-opacity 0.2s ease; /* Smooth fill transition */
+    transition: fill-opacity 0.2s ease;
 }
 
 @keyframes pulse {
@@ -82,7 +98,7 @@ canvas {
 }
 
 .leaflet-interactive:hover {
-    animation: pulse 1.5s infinite; /* Pulsing glow */
-    fill-opacity: 0.9;             /* Brighter fill */
-    z-index: 1000;                 /* Bring to front */
+    animation: pulse 1.5s infinite;
+    fill-opacity: 0.9;
+    z-index: 1000;
 }
