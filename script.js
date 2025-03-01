@@ -6,12 +6,12 @@ let currentMode = 'seats';
 
 // Election data from ECI
 const electionData = {
-    assembly2011: { labels: ['AIADMK', 'DMK', 'DMDK', 'INC', 'Others'], seats: [150, 23, 29, 5, 27], vote: [38.40, 22.39, 7.87, 9.31, 22.03], title: '2011 Assembly Election Results' },
-    assembly2016: { labels: ['AIADMK', 'DMK', 'INC', 'PMK', 'Others'], seats: [136, 89, 8, 0, 1], vote: [40.77, 31.64, 6.42, 5.32, 15.85], title: '2016 Assembly Election Results' },
-    assembly2021: { labels: ['DMK', 'AIADMK', 'INC', 'PMK', 'Others'], seats: [133, 66, 18, 5, 12], vote: [37.70, 33.29, 4.28, 3.81, 20.92], title: '2021 Assembly Election Results' },
-    lokSabha2014: { labels: ['AIADMK', 'DMK', 'BJP', 'INC', 'Others'], seats: [37, 0, 1, 0, 1], vote: [44.92, 23.60, 5.49, 4.37, 21.62], title: '2014 Lok Sabha Election Results' },
-    lokSabha2019: { labels: ['DMK', 'AIADMK', 'INC', 'PMK', 'Others'], seats: [23, 1, 8, 0, 7], vote: [33.51, 19.39, 12.77, 5.46, 28.87], title: '2019 Lok Sabha Election Results' },
-    lokSabha2024: { labels: ['DMK', 'AIADMK', 'INC', 'BJP', 'Others'], seats: [22, 0, 9, 0, 8], vote: [26.93, 20.46, 10.67, 11.24, 30.70], title: '2024 Lok Sabha Election Results' }
+    assembly2011: { labels: ['AIADMK', 'DMK', 'DMDK', 'CPI', 'CPI (M)', 'INC', 'PMK', 'AIFB', 'MNMK', 'PT'], seats: [150, 23, 29, 9, 10, 5, 3, 1, 2, 2], vote: [38.40, 22.39, 7.87, 2.01, 2.40, 9.30, 5.2, 0.20, 0.50, 0.40], title: '2011 Assembly Election Results' },
+    assembly2016: { labels: ['AIADMK', 'DMK', 'INC', 'IUML'], seats: [136, 89, 8, 1], vote: [40.88, 31.39, 6.47, 0.73], title: '2016 Assembly Election Results' },
+    assembly2021: { labels: ['DMK', 'AIADMK', 'INC', 'PMK', 'BJP', 'VCK', 'CPI', 'CPI (M)'], seats: [133, 66, 18, 5, 4, 4, 2, 2], vote: [37.70, 33.29, 4.28, 3.81, 2.62, 0.99, 1.09, 0.85], title: '2021 Assembly Election Results' },
+    lokSabha2014: { labels: ['AIADMK', 'BJP', 'PMK'], seats: [37, 1, 1], vote: [44.92, 5.56, 4.51], title: '2014 Lok Sabha Election Results' },
+    lokSabha2019: { labels: ['DMK', 'INC', 'CPI', 'CPI (M)', 'AIADMK', 'VCK', 'IUML'], seats: [24, 8, 2, 2, 1, 1, 1], vote: [33.52, 12.72, 2.41, 2.38, 19.39, 1.17, 1.09], title: '2019 Lok Sabha Election Results' },
+    lokSabha2024: { labels: ['DMK', 'INC', 'VCK', 'CPI', 'CPI (M)', 'IUML', 'MDMK'], seats: [22, 9, 2, 2, 2, 1, 1], vote: [26.92, 10.67, 2.25, 2.15, 2.52, 1.17, 1.28], title: '2024 Lok Sabha Election Results' }
 };
 
 // Party winners from ECI (aggregated for both)
@@ -83,10 +83,10 @@ const colors = {
         'CPI (M)': '#72251c',
         'MDMK': '#ed8b80',
         'IUML': '#186839',
-        'PMK': '#f4d03f',
-        'DMDK': '#f39c12',
+        'PMK': '#f4da35',
+        'DMDK': '#9c7d00',
         'PT' : '#3c6315',
-        'AIFB' : '#824e4e',
+        'AIFB' : '#b77d7d',
         'MNMK' : '#000000',
         'Others': '#95a5a6'
     }
