@@ -29,6 +29,7 @@ const colors = {
 
 // Initialize chart
 function initChart(election, mode) {
+    console.log('Initializing chart for:', election);
     const partyColors = electionData[election].labels.map(label => colors.parties[label] || colors.parties['Others']);
     electionChart = new Chart(ctx, {
         type: mode === 'seats' ? 'bar' : 'pie',
@@ -198,7 +199,7 @@ fetch('tamilnadu_constituencies.geojson')
                         let voteShare = 'N/A';
                         if (winners[currentElection] && currentElection.startsWith('assembly')) {
                             for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                                if (constijuencies.includes(constituency)) {
+                                if (constituencies.includes(constituency)) { // Fixed typo: constijuencies -> constituencies
                                     party = p;
                                     voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
                                     break;
