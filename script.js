@@ -27,7 +27,7 @@ const colors = {
     }
 };
 
-// Initialize chart
+// Initialize chart (unchanged)
 function initChart(election, mode) {
     console.log('Initializing chart for:', election);
     const partyColors = electionData[election].labels.map(label => colors.parties[label] || colors.parties['Others']);
@@ -63,7 +63,7 @@ function initChart(election, mode) {
     document.getElementById('chartTitle').textContent = electionData[election].title;
 }
 
-// Update chart with fade animation
+// Update chart with fade animation (unchanged)
 function updateChart(election) {
     currentElection = election;
     document.getElementById('electionChart').style.opacity = 0;
@@ -75,7 +75,7 @@ function updateChart(election) {
     }, 500);
 }
 
-// Toggle between seats and vote %
+// Toggle between seats and vote % (unchanged)
 function toggleData(mode) {
     currentMode = mode;
     updateChart(currentElection);
@@ -85,23 +85,24 @@ function toggleData(mode) {
     });
 }
 
-// Initialize map
-let lokSabhaLayer, assemblyLayer;
-const map = L.map('map').setView([11.1271, 78.6569], 7);
+// Initialize maps
+let lokSabhaLayerFront, assemblyLayerFront, lokSabhaLayerBack, assemblyLayerBack;
+const mapFront = L.map('map-front').setView([11.1271, 78.6569], 7);
+const mapBack = L.map('map-back').setView([11.1271, 78.6569], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
-}).addTo(map);
+}).addTo(mapFront).addTo(mapBack);
+
+let currentMap = mapFront; // Track the active map
+let isFrontActive = true;
 
 // Reset map view function
 function resetMapView() {
-    if (currentElection.startsWith('lokSabha') && lokSabhaLayer) {
-        map.fitBounds(lokSabhaLayer.getBounds(), { duration: 0.5 });
-    } else if (currentElection.startsWith('assembly') && assemblyLayer) {
-        map.fitBounds(assemblyLayer.getBounds(), { duration: 0.5 });
-    }
+    const activeLayer = currentElection.startsWith('lokSabha') ? (isFrontActive ? lokSabhaLayerFront : lokSabhaLayerBack) : (isFrontActive ? assemblyLayerFront : assemblyLayerBack);
+    if (activeLayer) currentMap.fitBounds(activeLayer.getBounds(), { duration: 0.5 });
 }
 
-// Load Lok Sabha GeoJSON
+// Load GeoJSON
 console.log('Loading Lok Sabha GeoJSON...');
 fetch('tamilnadu_constituencies.geojson')
     .then(response => {
@@ -110,62 +111,15 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .then(data => {
         console.log('Lok Sabha GeoJSON loaded:', data.features.length, 'features');
-        lokSabhaLayer = L.geoJSON(data, {
-            style: function(feature) {
-                const constituency = feature.properties.parliame_1;
-                let party = 'Others';
-                if (winners[currentElection] && currentElection.startsWith('lokSabha')) {
-                    for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                        if (constituencies.includes(constituency)) {
-                            party = p;
-                            break;
-                        }
-                    }
-                }
-                return {
-                    color: "#333333",
-                    weight: 2,
-                    fillColor: colors.parties[party],
-                    fillOpacity: 0.7
-                };
-            },
-            onEachFeature: function(feature, layer) {
-                const constituency = feature.properties.parliame_1;
-                let party = 'Others';
-                let voteShare = 'N/A';
-                if (winners[currentElection] && currentElection.startsWith('lokSabha')) {
-                    for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                        if (constituencies.includes(constituency)) {
-                            party = p;
-                            voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
-                            break;
-                        }
-                    }
-                }
-                layer.bindTooltip(`${constituency} - ${party} (${voteShare}%)`, {
-                    permanent: false,
-                    direction: 'top',
-                    offset: [0, -10]
-                });
-                layer.on({
-                    mouseover: function() {
-                        layer.setStyle({
-                            fillOpacity: 0.9
-                        });
-                        layer.bringToFront();
-                    },
-                    mouseout: function() {
-                        const party = Object.entries(winners[currentElection] && currentElection.startsWith('lokSabha') ? winners[currentElection] : {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
-                        layer.setStyle({
-                            fillColor: colors.parties[party],
-                            fillOpacity: 0.7
-                        });
-                    }
-                });
-            }
+        lokSabhaLayerFront = L.geoJSON(data, {
+            style: feature => styleFeature(feature, 'lokSabha'),
+            onEachFeature
+        }).addTo(mapFront);
+        lokSabhaLayerBack = L.geoJSON(data, {
+            style: feature => styleFeature(feature, 'lokSabha'),
+            onEachFeature
         });
 
-        // Load Assembly GeoJSON
         console.log('Loading Assembly GeoJSON...');
         fetch('tamilnadu_assembly.geojson')
             .then(response => {
@@ -174,68 +128,22 @@ fetch('tamilnadu_constituencies.geojson')
             })
             .then(data => {
                 console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
-                assemblyLayer = L.geoJSON(data, {
-                    style: function(feature) {
-                        const constituency = feature.properties.assembly_c;
-                        let party = 'Others';
-                        if (winners[currentElection] && currentElection.startsWith('assembly')) {
-                            for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                                if (constituencies.includes(constituency)) {
-                                    party = p;
-                                    break;
-                                }
-                            }
-                        }
-                        return {
-                            color: "#666666",
-                            weight: 1,
-                            fillColor: colors.parties[party],
-                            fillOpacity: 0.7
-                        };
-                    },
-                    onEachFeature: function(feature, layer) {
-                        const constituency = feature.properties.assembly_c;
-                        let party = 'Others';
-                        let voteShare = 'N/A';
-                        if (winners[currentElection] && currentElection.startsWith('assembly')) {
-                            for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                                if (constituencies.includes(constituency)) { // Fixed typo: constijuencies -> constituencies
-                                    party = p;
-                                    voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
-                                    break;
-                                }
-                            }
-                        }
-                        layer.bindTooltip(`${constituency} - ${party} (${voteShare}%)`, {
-                            permanent: false,
-                            direction: 'top',
-                            offset: [0, -10]
-                        });
-                        layer.on({
-                            mouseover: function() {
-                                layer.setStyle({
-                                    fillOpacity: 0.9
-                                });
-                                layer.bringToFront();
-                            },
-                            mouseout: function() {
-                                const party = Object.entries(winners[currentElection] && currentElection.startsWith('assembly') ? winners[currentElection] : {}).find(([p, constituencies]) => constituencies.includes(constituency))?.[0] || 'Others';
-                                layer.setStyle({
-                                    fillColor: colors.parties[party],
-                                    fillOpacity: 0.7
-                                });
-                            }
-                        });
-                    }
+                assemblyLayerFront = L.geoJSON(data, {
+                    style: feature => styleFeature(feature, 'assembly'),
+                    onEachFeature
+                });
+                assemblyLayerBack = L.geoJSON(data, {
+                    style: feature => styleFeature(feature, 'assembly'),
+                    onEachFeature
                 });
 
-                // Initial toggle - Assembly 2021 starts visible
+                // Initial setup
                 if (currentElection.startsWith('assembly')) {
-                    assemblyLayer.addTo(map);
-                    map.fitBounds(assemblyLayer.getBounds());
+                    assemblyLayerFront.addTo(mapFront);
+                    mapFront.fitBounds(assemblyLayerFront.getBounds());
                 } else {
-                    lokSabhaLayer.addTo(map);
-                    map.fitBounds(lokSabhaLayer.getBounds());
+                    lokSabhaLayerFront.addTo(mapFront);
+                    mapFront.fitBounds(lokSabhaLayerFront.getBounds());
                 }
                 updateMap(currentElection);
 
@@ -249,74 +157,125 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .catch(err => console.error('Lok Sabha GeoJSON error:', err));
 
-// Update map with winners and toggle layers
+// Style function
+function styleFeature(feature, type) {
+    const constituency = feature.properties[type === 'lokSabha' ? 'parliame_1' : 'assembly_c'];
+    let party = 'Others';
+    if (winners[currentElection] && currentElection.startsWith(type)) {
+        for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+            if (constituencies.includes(constituency)) {
+                party = p;
+                break;
+            }
+        }
+    }
+    return {
+        color: type === 'lokSabha' ? '#333333' : '#666666',
+        weight: type === 'lokSabha' ? 2 : 1,
+        fillColor: colors.parties[party],
+        fillOpacity: 0.7
+    };
+}
+
+// Tooltip and hover effects
+function onEachFeature(feature, layer) {
+    const constituency = feature.properties[currentElection.startsWith('lokSabha') ? 'parliame_1' : 'assembly_c'];
+    let party = 'Others';
+    let voteShare = 'N/A';
+    if (winners[currentElection]) {
+        for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+            if (constituencies.includes(constituency)) {
+                party = p;
+                voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
+                break;
+            }
+        }
+    }
+    layer.bindTooltip(`${constituency} - ${party} (${voteShare}%)`, {
+        permanent: false,
+        direction: 'top',
+        offset: [0, -10]
+    });
+    layer.on({
+        mouseover: () => layer.setStyle({ fillOpacity: 0.9 }).bringToFront(),
+        mouseout: () => layer.setStyle({ fillColor: colors.parties[party], fillOpacity: 0.7 })
+    });
+}
+
+// Update map with flip transition
 function updateMap(election) {
     console.log(`Map updating for ${election}`);
-    if (lokSabhaLayer && assemblyLayer) {
-        if (election.startsWith('lokSabha')) {
-            if (map.hasLayer(assemblyLayer)) map.removeLayer(assemblyLayer);
-            if (!map.hasLayer(lokSabhaLayer)) lokSabhaLayer.addTo(map);
-            lokSabhaLayer.eachLayer(function(layer) {
+    const isLokSabha = election.startsWith('lokSabha');
+    const nextMap = isFrontActive ? mapBack : mapFront;
+    const nextLokSabhaLayer = isFrontActive ? lokSabhaLayerBack : lokSabhaLayerFront;
+    const nextAssemblyLayer = isFrontActive ? assemblyLayerBack : assemblyLayerFront;
+
+    // Prepare the next map
+    if (lokSabhaLayerFront && assemblyLayerFront) {
+        if (isLokSabha) {
+            if (nextMap.hasLayer(nextAssemblyLayer)) nextMap.removeLayer(nextAssemblyLayer);
+            if (!nextMap.hasLayer(nextLokSabhaLayer)) nextLokSabhaLayer.addTo(nextMap);
+            nextLokSabhaLayer.eachLayer(layer => {
                 const constituency = layer.feature.properties.parliame_1;
                 let party = 'Others';
                 let voteShare = 'N/A';
                 if (winners[election]) {
                     for (const [p, constituencies] of Object.entries(winners[election])) {
-                        if (constituencies.includes(constituency)) {
+                        if (constiuencies.includes(constituency)) {
                             party = p;
                             voteShare = constituencyVoteShares[election]?.[constituency]?.[party] || 'N/A';
                             break;
                         }
                     }
                 }
-                layer.setStyle({
-                    color: "#333333",
-                    weight: 2,
-                    fillColor: colors.parties[party],
-                    fillOpacity: 0.7
-                });
+                layer.setStyle({ fillColor: colors.parties[party], fillOpacity: 0.7 });
                 layer.bindTooltip(`${constituency} - ${party} (${voteShare}%)`, {
                     permanent: false,
                     direction: 'top',
                     offset: [0, -10]
                 });
             });
-            map.fitBounds(lokSabhaLayer.getBounds());
-        } else if (election.startsWith('assembly')) {
-            if (map.hasLayer(lokSabhaLayer)) map.removeLayer(lokSabhaLayer);
-            if (!map.hasLayer(assemblyLayer)) assemblyLayer.addTo(map);
-            assemblyLayer.eachLayer(function(layer) {
+            nextMap.fitBounds(nextLokSabhaLayer.getBounds());
+        } else {
+            if (nextMap.hasLayer(nextLokSabhaLayer)) nextMap.removeLayer(nextLokSabhaLayer);
+            if (!nextMap.hasLayer(nextAssemblyLayer)) nextAssemblyLayer.addTo(nextMap);
+            nextAssemblyLayer.eachLayer(layer => {
                 const constituency = layer.feature.properties.assembly_c;
                 let party = 'Others';
                 let voteShare = 'N/A';
                 if (winners[election]) {
                     for (const [p, constituencies] of Object.entries(winners[election])) {
-                        if (constituencies.includes(constituency)) {
+                        if (constiuencies.includes(constituency)) {
                             party = p;
                             voteShare = constituencyVoteShares[election]?.[constituency]?.[party] || 'N/A';
                             break;
                         }
                     }
                 }
-                layer.setStyle({
-                    color: "#666666",
-                    weight: 1,
-                    fillColor: colors.parties[party],
-                    fillOpacity: 0.7
-                });
+                layer.setStyle({ fillColor: colors.parties[party], fillOpacity: 0.7 });
                 layer.bindTooltip(`${constituency} - ${party} (${voteShare}%)`, {
                     permanent: false,
                     direction: 'top',
                     offset: [0, -10]
                 });
             });
-            map.fitBounds(assemblyLayer.getBounds());
+            nextMap.fitBounds(nextAssemblyLayer.getBounds());
         }
+
+        // Trigger flip animation
+        const mapCard = document.querySelector('.map-card');
+        mapCard.classList.add('flipped');
+        setTimeout(() => {
+            currentMap = nextMap;
+            isFrontActive = !isFrontActive;
+            mapCard.classList.remove('flipped');
+            currentElection = election;
+        }, 400); // Half of 0.8s transition
     } else {
         console.log('One or both layers not loaded yet');
     }
 }
 
-// Start with 2021 Assembly
+// Start with 2021 Assembly (unchanged)
 initChart('assembly2021', 'seats');
 document.querySelector('.toggle button:first-child').classList.add('active');
