@@ -94,33 +94,44 @@ button:active {
     width: 100%;
     height: 100%;
     border-radius: 15px;
-    background: linear-gradient(90deg, #00BFFF 0%, transparent 33%, #FF4500 66%, transparent 100%) border-box;
-    background-size: 100% 8px; /* Thin horizontal strip */
+    box-shadow: 
+        0 0 0 4px rgba(0, 191, 255, 0), /* Blue placeholder */
+        0 0 0 8px rgba(255, 69, 0, 0), /* Orange placeholder */
+        0 0 0 12px rgba(0, 0, 0, 0); /* Transparent gap */
     animation: tracePerimeter 3s linear infinite; /* Clockwise tracing */
     z-index: -1;
-    /* Clip to perimeter using multiple clip-paths for each side */
-    clip-path: polygon(
-        0% 8px, 8px 8px, 8px 0%, 100% 0%, 100% 8px, calc(100% - 8px) 8px,
-        calc(100% - 8px) 100%, 100% 100%, 100% calc(100% - 8px), 8px calc(100% - 8px),
-        8px 100%, 0% 100%, 0% calc(100% - 8px)
-    );
 }
 
 @keyframes tracePerimeter {
     0% {
-        background-position: 100% 0%; /* Start with orange at top-right */
+        box-shadow: 
+            0 0 0 4px rgba(0, 191, 255, 0.8), /* Blue at top */
+            0 0 0 8px rgba(255, 69, 0, 0),
+            0 0 0 12px rgba(0, 0, 0, 0);
     }
     25% {
-        background-position: 0% 0%; /* Blue at top-left */
+        box-shadow: 
+            -4px 0 0 0 rgba(0, 191, 255, 0),
+            0 4px 0 0 rgba(255, 69, 0, 0), /* Orange at right */
+            0 0 0 4px rgba(0, 0, 0, 0);
     }
     50% {
-        background-position: 0% 100%; /* Orange at bottom-left */
+        box-shadow: 
+            0 -4px 0 0 rgba(0, 191, 255, 0),
+            0 0 0 0 rgba(255, 69, 0, 0),
+            4px 0 0 0 rgba(0, 0, 0, 0); /* Transparent at bottom */
     }
     75% {
-        background-position: 100% 100%; /* Blue at bottom-right */
+        box-shadow: 
+            0 0 0 0 rgba(0, 191, 255, 0),
+            0 -4px 0 0 rgba(255, 69, 0, 0.8), /* Orange at left */
+            0 0 0 4px rgba(0, 0, 0, 0);
     }
     100% {
-        background-position: 100% 0%; /* Back to orange at top-right */
+        box-shadow: 
+            0 4px 0 0 rgba(0, 191, 255, 0.8), /* Blue back at top */
+            0 0 0 0 rgba(255, 69, 0, 0),
+            0 0 0 4px rgba(0, 0, 0, 0);
     }
 }
 
