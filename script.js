@@ -62,7 +62,7 @@ function initChart(election, mode) {
 
 // Update chart with fade animation
 function updateChart(election) {
-    currentElection = election; // Update before map to sync
+    currentElection = election;
     document.getElementById('electionChart').style.opacity = 0;
     setTimeout(() => {
         electionChart.destroy();
@@ -98,7 +98,7 @@ function resetMapView() {
     const activeLayer = currentElection.startsWith('lokSabha') ? (isFrontActive ? lokSabhaLayerFront : lokSabhaLayerBack) : (isFrontActive ? assemblyLayerFront : assemblyLayerBack);
     if (activeLayer) {
         currentMap.fitBounds(activeLayer.getBounds(), { duration: 0.5 });
-        currentMap.invalidateSize(); // Fix rendering
+        currentMap.invalidateSize();
     }
 }
 
@@ -120,14 +120,15 @@ fetch('tamilnadu_constituencies.geojson')
     .then(data => {
         assemblyLayerFront = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
         assemblyLayerBack = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
-        assemblyLayerFront.addTo(mapFront); // Initial load
+        assemblyLayerFront.addTo(mapFront);
         mapFront.fitBounds(assemblyLayerFront.getBounds());
-        mapFront.invalidateSize(); // Ensure initial render
+        mapFront.invalidateSize();
         document.querySelector('.dashboard').appendChild(Object.assign(document.createElement('button'), {
             textContent: 'Reset View',
             className: 'reset-button',
             onclick: resetMapView
         }));
+        updateMap('assembly2021'); // Ensure initial state
     })
     .catch(err => console.error('GeoJSON error:', err));
 
@@ -155,7 +156,16 @@ function styleFeature(type) {
 
 // Tooltip and hover effects
 function onEachFeature(feature, layer) {
-    const constituency = feature.properties[currentElection.startsWith('lokSabha') ? 'parliame_1' : 'assembly_c'];
+    layer.on({
+        mouseover: () => layer.setStyle({ fillOpacity: 0.9 }).bringToFront(),
+        mouseout: () => layer.setStyle({ fillOpacity: 0.7 })
+    });
+    updateTooltip(layer); // Initial tooltip
+}
+
+// Update tooltip dynamically
+function updateTooltip(layer) {
+    const constituency = layer.feature.properties[currentElection.startsWith('lokSabha') ? 'parliame_1' : 'assembly_c'];
     let party = 'Others';
     let voteShare = 'N/A';
     if (winners[currentElection]) {
@@ -172,10 +182,6 @@ function onEachFeature(feature, layer) {
         direction: 'top',
         offset: [0, -10]
     });
-    layer.on({
-        mouseover: () => layer.setStyle({ fillOpacity: 0.9 }).bringToFront(),
-        mouseout: () => layer.setStyle({ fillColor: colors.parties[party], fillOpacity: 0.7 })
-    });
 }
 
 // Update map with flip transition
@@ -191,29 +197,38 @@ function updateMap(election) {
     const nextLokSabhaLayer = isFrontActive ? lokSabhaLayerBack : lokSabhaLayerFront;
     const nextAssemblyLayer = isFrontActive ? assemblyLayerBack : assemblyLayerFront;
 
+    // Update currentElection before styling
+    currentElection = election;
+
     // Prepare next map
     if (isLokSabha) {
         if (nextMap.hasLayer(nextAssemblyLayer)) nextMap.removeLayer(nextAssemblyLayer);
         if (!nextMap.hasLayer(nextLokSabhaLayer)) nextLokSabhaLayer.addTo(nextMap);
-        nextLokSabhaLayer.eachLayer(layer => layer.setStyle(styleFeature('lokSabha')));
+        nextLokSabhaLayer.eachLayer(layer => {
+            layer.setStyle(styleFeature('lokSabha'));
+            updateTooltip(layer);
+        });
         nextMap.fitBounds(nextLokSabhaLayer.getBounds());
     } else {
         if (nextMap.hasLayer(nextLokSabhaLayer)) nextMap.removeLayer(nextLokSabhaLayer);
         if (!nextMap.hasLayer(nextAssemblyLayer)) nextAssemblyLayer.addTo(nextMap);
-        nextAssemblyLayer.eachLayer(layer => layer.setStyle(styleFeature('assembly')));
+        nextAssemblyLayer.eachLayer(layer => {
+            layer.setStyle(styleFeature('assembly'));
+            updateTooltip(layer);
+        });
         nextMap.fitBounds(nextAssemblyLayer.getBounds());
     }
-    nextMap.invalidateSize(); // Fix rendering before flip
+    nextMap.invalidateSize();
 
     // Flip animation
     const mapCard = document.querySelector('.map-card');
     mapCard.classList.add('flipped');
     setTimeout(() => {
-        currentMap.invalidateSize(); // Fix rendering on current map
         currentMap = nextMap;
         isFrontActive = !isFrontActive;
+        currentMap.invalidateSize();
         mapCard.classList.remove('flipped');
-        currentMap.invalidateSize(); // Ensure render after flip
+        currentMap.whenReady(() => currentMap.invalidateSize()); // Ensure render after flip
     }, 400); // Half of 0.8s
 }
 
