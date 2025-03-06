@@ -99,7 +99,7 @@ function resetMapView() {
 }
 
 // Load GeoJSON
-fetch('tamilnadu_constituencies.geojson')
+fetch('tamilnadu_constiuencies.geojson')
     .then(response => {
         if (!response.ok) throw new Error('Lok Sabha GeoJSON fetch failed: ' + response.status);
         return response.json();
