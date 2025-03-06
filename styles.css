@@ -72,9 +72,9 @@ button:active {
     width: 100%;
     max-width: 650px;
     height: 70vh;
-    margin: 0 auto;
+    margin: 20px auto; /* Extra margin for lift visibility */
     position: relative;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.1); /* Card-like shadow */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 0 0 15px rgba(200, 200, 200, 0.2); /* Enhanced shadow */
     border-radius: 15px;
     background: #2a2a2a; /* Dark base for map */
 }
@@ -91,13 +91,13 @@ button:active {
 
 @keyframes radialGradient {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.5), 0 0 0 10px rgba(255, 255, 255, 0.2);
+        box-shadow: 0 0 0 0 rgba(192, 192, 192, 0.5), 0 0 0 10px rgba(169, 169, 169, 0.3); /* Silver start */
     }
     50% {
-        box-shadow: 0 0 0 20px rgba(255, 255, 255, 0.3), 0 0 0 40px rgba(255, 255, 255, 0.1);
+        box-shadow: 0 0 0 20px rgba(200, 200, 200, 0.4), 0 0 0 40px rgba(180, 180, 180, 0.2); /* Soft metallic peak */
     }
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        box-shadow: 0 0 0 0 rgba(192, 192, 192, 0); /* Fade out */
     }
 }
 
