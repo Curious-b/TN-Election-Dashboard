@@ -25,7 +25,7 @@ button {
     font-size: 16px;
     border-radius: 25px;
     background-color: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(2.5px);
     transition: all 0.3s ease;
 }
 
@@ -76,66 +76,106 @@ button:active {
     position: relative;
     border-radius: 15px;
     background: #2a2a2a; /* Dark base for map */
+    overflow: hidden;
 }
 
-.map-card {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    border-radius: 15px;
-    overflow: hidden; /* Ensure glow stays within bounds */
-}
-
-.map-card::before {
+.map-container span:nth-child(1) {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
+    left: -100%;
     width: 100%;
+    height: 5px;
+    background: linear-gradient(90deg, #00BFFF, transparent, #FF4500);
+    /*z-index: 0;*/
+    /*transform: skew(2deg, 2deg);*/
+    animation: animate1 2s linear infinite;
+    animation-delay: 0s;
+    filter: blur(1px);
+}
+
+@keyframes animate1 {
+    0% {
+        left: -100%;
+    }
+    50%, 100% {
+        left: 100%;
+    }
+}
+
+.map-container span:nth-child(3) {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: -100%;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(270deg, #00BFFF, transparent, #FF4500);
+    animation: animate3 2s linear infinite;
+    animation-delay: 1s;
+    filter: blur(1px);
+}
+
+@keyframes animate3 {
+    0% {
+        right: -100%;
+    }
+    50%, 100% {
+        right: 100%;
+    }
+}
+
+.map-container span:nth-child(2) {
+    content: '';
+    position: absolute;
+    top: -100%;
+    right: 0;
+    width: 5px;
     height: 100%;
+    background: linear-gradient(180deg, #00BFFF, transparent, #FF4500);
+    animation: animate2 2s linear infinite;
+    animation-delay: 0.5s;
+    filter: blur(1px);
+}
+
+@keyframes animate2 {
+    0% {
+        top: -100%;
+    }
+    50%, 100% {
+        top: 100%;
+    }
+}
+
+.map-container span:nth-child(4) {
+    content: '';
+    position: absolute;
+    bottom: -100%;
+    left: 0;
+    width: 5px;
+    height: 100%;
+    background: linear-gradient(360deg, #00BFFF, transparent, #FF4500);
+    animation: animate4 2s linear infinite;
+    animation-delay: 1.5s;
+    filter: blur(1px);
+}
+
+@keyframes animate4 {
+    0% {
+        bottom: -100%;
+    }
+    50%, 100% {
+        bottom: 100%;
+    }
+}
+
+.map-card {
+    width: 98%;
+    height: 98%;
+    padding-left: 1%;
+    padding-top: 1%;
+    position: relative;
     border-radius: 15px;
-    background: linear-gradient(90deg, #00BFFF 0%, transparent 33%, #FF4500 66%, transparent 100%);
-    background-size: 100% 4px; /* Thin glow strip */
-    animation: tracePerimeter 3s linear infinite; /* Clockwise tracing */
-    z-index: -1;
-    /* Apply background to all sides with positioning */
-    background-repeat: repeat;
-    /* Ensure glow is confined to edges using a pseudo-border effect */
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0); /* Invisible border to help with alignment */
-}
-
-@keyframes tracePerimeter {
-    0% {
-        background-position: 0% 0%; /* Blue at top */
-    }
-    25% {
-        background-position: 100% 0%, 0% 100%, 100% 100%, 0% 0%; /* Orange at right */
-    }
-    50% {
-        background-position: 0% 100%; /* Blue at bottom */
-    }
-    75% {
-        background-position: 100% 100%, 0% 0%, 100% 0%, 0% 100%; /* Orange at left */
-    }
-    100% {
-        background-position: 0% 0%; /* Back to blue at top */
-    }
-}
-
-.map-card.transitioning {
-    animation: radialGradient 0.8s ease-in-out forwards;
-}
-
-@keyframes radialGradient {
-    0% {
-        box-shadow: 0 0 0 0 rgba(192, 192, 192, 0.5), 0 0 0 10px rgba(169, 169, 169, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 0 20px rgba(200, 200, 200, 0.4), 0 0 0 40px rgba(180, 180, 180, 0.2);
-    }
-    100% {
-        box-shadow: 0 0 0 0 rgba(192, 192, 192, 0);
-    }
 }
 
 .map-front {
