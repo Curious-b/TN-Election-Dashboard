@@ -143,7 +143,7 @@ function styleFeature(feature, type) {
     return {
         color: type === 'lokSabha' ? '#333333' : '#666666',
         weight: type === 'lokSabha' ? 2 : 1,
-        fillColor: colors.parties[party] || '#95a5a6', // Fallback color
+        fillColor: colors.parties[party] || '#95a5a6',
         fillOpacity: 0.7
     };
 }
@@ -164,7 +164,7 @@ function updateTooltip(layer) {
     let voteShare = 'N/A';
     if (winners[currentElection]) {
         for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-            if (constituencies.includes(constituency)) {
+            if (constiuencies.includes(constituency)) {
                 party = p;
                 voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
                 break;
@@ -178,7 +178,7 @@ function updateTooltip(layer) {
     });
 }
 
-// Update map with flip transition
+// Update map with radial gradient transition
 function updateMap(election) {
     console.log(`Updating map for ${election}, previous: ${currentElection}`);
     if (!lokSabhaLayer || !assemblyLayer) {
@@ -186,7 +186,7 @@ function updateMap(election) {
         return;
     }
 
-    currentElection = election; // Set immediately
+    currentElection = election;
     const isLokSabha = election.startsWith('lokSabha');
 
     // Update layers
@@ -209,17 +209,17 @@ function updateMap(election) {
     }
     map.invalidateSize();
 
-    // Flip animation
+    // Radial gradient animation
     const mapCard = document.querySelector('.map-card');
-    mapCard.classList.add('flipped');
+    mapCard.classList.add('transitioning');
     setTimeout(() => {
-        mapCard.classList.remove('flipped');
+        mapCard.classList.remove('transitioning');
         map.invalidateSize();
         map.whenReady(() => {
             console.log('Map rendered for:', election);
             map.invalidateSize();
         });
-    }, 400); // Half of 0.8s
+    }, 800); // Match animation duration
 }
 
 // Start with 2021 Assembly
