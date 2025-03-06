@@ -10,25 +10,28 @@ h1 {
     color: #ffffff;
     text-align: center;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 2em; /* Adjusted for responsiveness */
 }
 
 p {
     color: #cccccc;
     text-align: center;
+    font-size: 1em;
 }
 
 h2 {
     color: #ffffff;
     text-align: center;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    font-size: 1.5em;
 }
 
 button {
     border: none;
-    padding: 10px 20px;
+    padding: 10px 15px; /* Slightly reduced padding for mobile */
     color: #ffffff;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 14px; /* Slightly reduced font size */
     border-radius: 25px;
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2.5px);
@@ -52,8 +55,8 @@ button:active {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-    padding: 20px;
+    gap: 8px; /* Reduced gap for mobile */
+    padding: 15px; /* Reduced padding */
 }
 
 .controls button.active {
@@ -64,7 +67,7 @@ button:active {
 .toggle {
     justify-self: center;
     display: flex;
-    gap: 20px;
+    gap: 15px;
 }
 
 .toggle button.active {
@@ -74,8 +77,8 @@ button:active {
 
 .dashboard {
     max-width: 800px;
-    margin: 0 auto 20px auto;
-    padding: 20px;
+    margin: 0 auto 15px auto; /* Reduced margin */
+    padding: 15px; /* Reduced padding */
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     border-radius: 15px;
@@ -85,11 +88,11 @@ button:active {
 .map-container {
     width: 100%;
     max-width: 650px;
-    height: 70vh;
-    margin: 20px auto;
+    height: 50vh; /* Reduced height for mobile */
+    margin: 15px auto; /* Reduced margin */
     position: relative;
     border-radius: 15px;
-    background: #2a2a2a; /* Dark base for map */
+    background: #2a2a2a;
     overflow: hidden;
 }
 
@@ -102,7 +105,6 @@ button:active {
     height: 8px;
     background: linear-gradient(90deg, #00BFFF, transparent, #FF4500);
     z-index: 0;
-    /*transform: skew(2deg, 2deg);*/
     animation: animate1 2s linear infinite;
     animation-delay: 0s;
     filter: blur(2px);
@@ -187,10 +189,11 @@ button:active {
 }
 
 .map-card {
+    justify-self: center;
     width: 98%;
-    height: 98%;
-    padding-left: 1%;
+    height: 97%;
     padding-top: 1%;
+    padding-bottom: 1.5%;
     position: relative;
     border-radius: 14px;
 }
@@ -202,7 +205,7 @@ button:active {
 }
 
 .map-back {
-    display: none; /* Hide dummy back side */
+    display: none;
 }
 
 .reset-button {
@@ -215,32 +218,80 @@ button:active {
     background-color: rgba(231, 76, 60, 1);
 }
 
-/* New styles for chart areas with glassmorphism */
+/* Chart areas with glassmorphism */
 .chart-container {
     display: flex;
     justify-content: space-between;
-    gap: 20px;
-    padding: 20px;
+    gap: 15px; /* Reduced gap */
+    padding: 15px; /* Reduced padding */
 }
 
 .chart-area {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
-    backdrop-filter: blur(10px); /* Glassmorphism blur */
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-    padding: 15px;
+    padding: 10px; /* Reduced padding */
     text-align: center;
 }
 
 .chart-area h3 {
     color: #ffffff;
-    margin-bottom: 10px;
+    margin-bottom: 5px; /* Reduced margin */
     text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    font-size: 1.2em; /* Adjusted for responsiveness */
 }
 
 .seats-chart canvas,
 .vote-chart canvas {
     width: 100%;
-    height: 300px !important; /* Fixed height to match both charts */
+    height: 300px !important; /* Default height for desktop */
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
+    }
+    h2 {
+        font-size: 1.2em;
+    }
+    p {
+        font-size: 0.9em;
+    }
+    button {
+        padding: 8px 12px;
+        font-size: 12px;
+    }
+    .controls {
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 10px;
+    }
+    .dashboard {
+        margin: 0 auto 10px auto;
+        padding: 10px;
+    }
+    .map-container {
+        height: 40vh;
+        margin: 10px auto;
+    }
+    .chart-container {
+        flex-direction: column; /* Stack charts vertically on mobile */
+        gap: 10px;
+        padding: 10px;
+    }
+    .chart-area {
+        padding: 8px;
+    }
+    .chart-area h3 {
+        font-size: 1em;
+    }
+    .seats-chart canvas,
+    .vote-chart canvas {
+        height: 200px !important; /* Reduced height for mobile */
+    }
+    .reset-button {
+        margin: 5px auto;
+    }
 }

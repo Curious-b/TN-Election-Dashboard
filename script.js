@@ -46,7 +46,7 @@ function initCharts(election) {
                 backgroundColor: partyColors,
                 borderColor: partyColors,
                 borderWidth: 1,
-                barThickness: 20 // Ensure bars are wide enough to be hoverable
+                barThickness: 20
             }]
         },
         options: {
@@ -85,7 +85,6 @@ function initCharts(election) {
                     mode: 'index',
                     intersect: false,
                     callbacks: {
-                        // Customize tooltip to ensure all values are shown
                         label: function(context) {
                             const label = context.dataset.label || '';
                             const value = context.raw || 0;
@@ -206,7 +205,7 @@ fetch('tamilnadu_constituencies.geojson')
         console.log('Assembly GeoJSON loaded successfully:', data.features.length, 'features');
         console.log('Sample feature:', data.features[0].properties);
         assemblyLayer = L.geoJSON(data, { style: feature => styleFeature(feature, 'assembly'), onEachFeature });
-        assemblyLayer.addTo(map); // Initial load
+        assemblyLayer.addTo(map);
         console.log('Assembly layer added to map:', map.hasLayer(assemblyLayer));
         map.fitBounds(assemblyLayer.getBounds());
         map.invalidateSize();
@@ -215,11 +214,10 @@ fetch('tamilnadu_constituencies.geojson')
             className: 'reset-button',
             onclick: resetMapView
         }));
-        updateChart('assembly2021'); // Ensure initial state
+        updateChart('assembly2021');
     })
     .catch(err => {
         console.error('GeoJSON loading error:', err.message);
-        // Fallback: Add a dummy layer to test map rendering
         L.geoJSON({
             type: 'FeatureCollection',
             features: [{
