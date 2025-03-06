@@ -83,17 +83,27 @@ button:active {
     height: 100%;
     position: relative;
     border-radius: 15px;
-    border: 4px solid transparent; /* Space for gradient */
-    border-image: conic-gradient(from 0deg, #00BFFF, #FF4500, #00BFFF) 1; /* Blue to orange gradient */
-    animation: rotateGradient 4s linear infinite; /* Rotate gradient */
 }
 
-@keyframes rotateGradient {
+.map-card::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    right: -8px;
+    bottom: -8px;
+    border-radius: 19px; /* Adjusted for border thickness */
+    background: linear-gradient(90deg, #00BFFF, #FF4500, transparent, transparent) 0 0 / 200% 100%;
+    animation: traceGlow 3s linear infinite;
+    z-index: -1;
+}
+
+@keyframes traceGlow {
     0% {
-        border-image: conic-gradient(from 0deg, #00BFFF, #FF4500, #00BFFF) 1;
+        background-position: 0% 50%;
     }
     100% {
-        border-image: conic-gradient(from 360deg, #00BFFF, #FF4500, #00BFFF) 1;
+        background-position: 200% 50%;
     }
 }
 
