@@ -82,23 +82,19 @@ function toggleData(mode) {
     });
 }
 
-// Initialize maps
-let lokSabhaLayerFront, assemblyLayerFront, lokSabhaLayerBack, assemblyLayerBack;
-const mapFront = L.map('map-front', { zoomControl: true }).setView([11.1271, 78.6569], 7);
-const mapBack = L.map('map-back', { zoomControl: true }).setView([11.1271, 78.6569], 7);
+// Initialize single map
+let lokSabhaLayer, assemblyLayer;
+const map = L.map('map-front', { zoomControl: true }).setView([11.1271, 78.6569], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
-}).addTo(mapFront).addTo(mapBack);
-
-let currentMap = mapFront;
-let isFrontActive = true;
+}).addTo(map);
 
 // Reset map view function
 function resetMapView() {
-    const activeLayer = currentElection.startsWith('lokSabha') ? (isFrontActive ? lokSabhaLayerFront : lokSabhaLayerBack) : (isFrontActive ? assemblyLayerFront : assemblyLayerBack);
+    const activeLayer = currentElection.startsWith('lokSabha') ? lokSabhaLayer : assemblyLayer;
     if (activeLayer) {
-        currentMap.fitBounds(activeLayer.getBounds(), { duration: 0.5 });
-        currentMap.invalidateSize();
+        map.fitBounds(activeLayer.getBounds(), { duration: 0.5 });
+        map.invalidateSize();
     }
 }
 
@@ -109,8 +105,8 @@ fetch('tamilnadu_constituencies.geojson')
         return response.json();
     })
     .then(data => {
-        lokSabhaLayerFront = L.geoJSON(data, { style: styleFeature('lokSabha'), onEachFeature });
-        lokSabhaLayerBack = L.geoJSON(data, { style: styleFeature('lokSabha'), onEachFeature });
+        console.log('Lok Sabha GeoJSON loaded:', data.features.length, 'features');
+        lokSabhaLayer = L.geoJSON(data, { style: styleFeature('lokSabha'), onEachFeature });
         return fetch('tamilnadu_assembly.geojson');
     })
     .then(response => {
@@ -118,11 +114,11 @@ fetch('tamilnadu_constituencies.geojson')
         return response.json();
     })
     .then(data => {
-        assemblyLayerFront = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
-        assemblyLayerBack = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
-        assemblyLayerFront.addTo(mapFront);
-        mapFront.fitBounds(assemblyLayerFront.getBounds());
-        mapFront.invalidateSize();
+        console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
+        assemblyLayer = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
+        assemblyLayer.addTo(map); // Initial load
+        map.fitBounds(assemblyLayer.getBounds());
+        map.invalidateSize();
         document.querySelector('.dashboard').appendChild(Object.assign(document.createElement('button'), {
             textContent: 'Reset View',
             className: 'reset-button',
@@ -186,49 +182,46 @@ function updateTooltip(layer) {
 
 // Update map with flip transition
 function updateMap(election) {
-    console.log(`Updating map for ${election}`);
-    if (!lokSabhaLayerFront || !assemblyLayerFront) {
+    console.log(`Updating map for ${election}, currentElection: ${currentElection}`);
+    if (!lokSabhaLayer || !assemblyLayer) {
         console.log('Layers not loaded yet');
         return;
     }
 
-    const isLokSabha = election.startsWith('lokSabha');
-    const nextMap = isFrontActive ? mapBack : mapFront;
-    const nextLokSabhaLayer = isFrontActive ? lokSabhaLayerBack : lokSabhaLayerFront;
-    const nextAssemblyLayer = isFrontActive ? assemblyLayerBack : assemblyLayerFront;
-
-    // Update currentElection before styling
+    // Update currentElection
     currentElection = election;
+    const isLokSabha = election.startsWith('lokSabha');
 
-    // Prepare next map
+    // Prepare map
     if (isLokSabha) {
-        if (nextMap.hasLayer(nextAssemblyLayer)) nextMap.removeLayer(nextAssemblyLayer);
-        if (!nextMap.hasLayer(nextLokSabhaLayer)) nextLokSabhaLayer.addTo(nextMap);
-        nextLokSabhaLayer.eachLayer(layer => {
+        if (map.hasLayer(assemblyLayer)) map.removeLayer(assemblyLayer);
+        if (!map.hasLayer(lokSabhaLayer)) lokSabhaLayer.addTo(map);
+        lokSabhaLayer.eachLayer(layer => {
             layer.setStyle(styleFeature('lokSabha'));
             updateTooltip(layer);
         });
-        nextMap.fitBounds(nextLokSabhaLayer.getBounds());
+        map.fitBounds(lokSabhaLayer.getBounds());
     } else {
-        if (nextMap.hasLayer(nextLokSabhaLayer)) nextMap.removeLayer(nextLokSabhaLayer);
-        if (!nextMap.hasLayer(nextAssemblyLayer)) nextAssemblyLayer.addTo(nextMap);
-        nextAssemblyLayer.eachLayer(layer => {
+        if (map.hasLayer(lokSabhaLayer)) map.removeLayer(lokSabhaLayer);
+        if (!map.hasLayer(assemblyLayer)) assemblyLayer.addTo(map);
+        assemblyLayer.eachLayer(layer => {
             layer.setStyle(styleFeature('assembly'));
             updateTooltip(layer);
         });
-        nextMap.fitBounds(nextAssemblyLayer.getBounds());
+        map.fitBounds(assemblyLayer.getBounds());
     }
-    nextMap.invalidateSize();
+    map.invalidateSize();
 
     // Flip animation
     const mapCard = document.querySelector('.map-card');
     mapCard.classList.add('flipped');
     setTimeout(() => {
-        currentMap = nextMap;
-        isFrontActive = !isFrontActive;
-        currentMap.invalidateSize();
         mapCard.classList.remove('flipped');
-        currentMap.whenReady(() => currentMap.invalidateSize()); // Ensure render after flip
+        map.invalidateSize();
+        map.whenReady(() => {
+            console.log('Map rendered for:', election);
+            map.invalidateSize();
+        });
     }, 400); // Half of 0.8s
 }
 
