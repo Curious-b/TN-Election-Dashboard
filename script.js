@@ -1,8 +1,8 @@
-// Chart context
-const ctx = document.getElementById('electionChart').getContext('2d');
-let electionChart;
+// Chart contexts
+const ctxSeats = document.getElementById('seatsChart').getContext('2d');
+const ctxVote = document.getElementById('voteChart').getContext('2d');
+let seatsChart, voteChart;
 let currentElection = 'assembly2021';
-let currentMode = 'seats';
 
 // Colors for charts and map
 const colors = {
@@ -27,25 +27,109 @@ const colors = {
     }
 };
 
-// Initialize chart
-function initChart(election, mode) {
-    console.log('Initializing chart for:', election);
+// Initialize charts
+function initCharts(election) {
+    console.log('Initializing charts for:', election);
     const partyColors = electionData[election].labels.map(label => colors.parties[label] || colors.parties['Others']);
-    electionChart = new Chart(ctx, {
-        type: mode === 'seats' ? 'bar' : 'pie',
+    
+    // Debug: Log the labels and seats data to inspect
+    console.log('Labels:', electionData[election].labels);
+    console.log('Seats:', electionData[election].seats);
+
+    seatsChart = new Chart(ctxSeats, {
+        type: 'bar',
         data: {
             labels: electionData[election].labels,
             datasets: [{
-                label: mode === 'seats' ? 'Seats Won' : 'Vote %',
-                data: electionData[election][mode],
+                label: 'Seats Won',
+                data: electionData[election].seats,
                 backgroundColor: partyColors,
-                borderColor: mode === 'seats' ? partyColors : undefined,
-                borderWidth: mode === 'seats' ? 1 : 0
+                borderColor: partyColors,
+                borderWidth: 1,
+                barThickness: 20 // Ensure bars are wide enough to be hoverable
             }]
         },
         options: {
-            scales: mode === 'seats' ? { y: { beginAtZero: true, title: { display: true, text: 'Number of Seats' } } } : {},
-            plugins: { legend: { display: true }, tooltip: { enabled: true } },
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Seats',
+                        color: '#ffffff',
+                        font: { weight: 'bold', size: 14 }
+                    },
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 12 }
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)',
+                        borderColor: 'rgba(255, 255, 255, 0.2)'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: 'rgba(255, 255, 255, 0.9)',
+                        font: { size: 12 }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true,
+                    mode: 'index',
+                    intersect: false,
+                    callbacks: {
+                        // Customize tooltip to ensure all values are shown
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const value = context.raw || 0;
+                            const party = context.chart.data.labels[context.dataIndex];
+                            return `${party}: ${value} seats`;
+                        }
+                    }
+                }
+            },
+            animation: { duration: 1000, easing: 'easeInOutQuad' },
+            hover: {
+                mode: 'index',
+                intersect: false,
+                animationDuration: 400,
+                onHover: (event, chartElement) => {
+                    event.native.target.style.cursor = chartElement.length ? 'pointer' : 'default';
+                }
+            }
+        }
+    });
+
+    voteChart = new Chart(ctxVote, {
+        type: 'pie',
+        data: {
+            labels: electionData[election].labels,
+            datasets: [{
+                label: 'Vote %',
+                data: electionData[election].vote,
+                backgroundColor: partyColors,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#ffffff',
+                        font: { size: 12, style: 'italic' }
+                    }
+                },
+                tooltip: { enabled: true }
+            },
             animation: { duration: 1000, easing: 'easeInOutQuad' },
             hover: {
                 mode: 'nearest',
@@ -57,29 +141,26 @@ function initChart(election, mode) {
             }
         }
     });
+
     document.getElementById('chartTitle').textContent = electionData[election].title;
 }
 
-// Update chart with fade animation
+// Update charts and map with fade animation
 function updateChart(election) {
     currentElection = election;
-    document.getElementById('electionChart').style.opacity = 0;
+    const seatsCanvas = document.getElementById('seatsChart');
+    const voteCanvas = document.getElementById('voteChart');
+    seatsCanvas.style.opacity = 0;
+    voteCanvas.style.opacity = 0;
+
     setTimeout(() => {
-        electionChart.destroy();
-        initChart(election, currentMode);
-        document.getElementById('electionChart').style.opacity = 1;
+        seatsChart.destroy();
+        voteChart.destroy();
+        initCharts(election);
+        seatsCanvas.style.opacity = 1;
+        voteCanvas.style.opacity = 1;
         updateMap(election);
     }, 500);
-}
-
-// Toggle between seats and vote %
-function toggleData(mode) {
-    currentMode = mode;
-    updateChart(currentElection);
-    document.querySelectorAll('.toggle button').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent === (mode === 'seats' ? 'Seats Won' : 'Vote %')) btn.classList.add('active');
-    });
 }
 
 // Initialize single map
@@ -134,7 +215,7 @@ fetch('tamilnadu_constituencies.geojson')
             className: 'reset-button',
             onclick: resetMapView
         }));
-        updateMap('assembly2021'); // Ensure initial state
+        updateChart('assembly2021'); // Ensure initial state
     })
     .catch(err => {
         console.error('GeoJSON loading error:', err.message);
@@ -164,7 +245,7 @@ function styleFeature(feature, type) {
     }
     console.log(`Styling ${constituency} as ${party} (${colors.parties[party] || '#95a5a6'})`);
     return {
-        color: type === 'lokSabha' ? '#ffffff' : '#cccccc', // Lighter boundaries for dark theme
+        color: type === 'lokSabha' ? '#ffffff' : '#cccccc',
         weight: type === 'lokSabha' ? 2 : 1,
         fillColor: colors.parties[party] || '#95a5a6',
         fillOpacity: 0.7
@@ -177,7 +258,7 @@ function onEachFeature(feature, layer) {
         mouseover: () => layer.setStyle({ fillOpacity: 0.9 }).bringToFront(),
         mouseout: () => layer.setStyle({ fillOpacity: 0.7 })
     });
-    updateTooltip(layer); // Initial tooltip
+    updateTooltip(layer);
 }
 
 // Update tooltip dynamically
@@ -212,7 +293,6 @@ function updateMap(election) {
     currentElection = election;
     const isLokSabha = election.startsWith('lokSabha');
 
-    // Update layers
     if (isLokSabha) {
         if (map.hasLayer(assemblyLayer)) map.removeLayer(assemblyLayer);
         if (!map.hasLayer(lokSabhaLayer)) lokSabhaLayer.addTo(map);
@@ -236,7 +316,6 @@ function updateMap(election) {
         assembly: map.hasLayer(assemblyLayer)
     });
 
-    // Radial gradient animation
     const mapCard = document.querySelector('.map-card');
     mapCard.classList.add('transitioning');
     setTimeout(() => {
@@ -246,10 +325,11 @@ function updateMap(election) {
             console.log('Map rendered for:', election);
             map.invalidateSize();
         });
-    }, 800); // Match animation duration
+    }, 800);
 }
 
 // Start with 2021 Assembly
-initChart('assembly2021', 'seats');
-document.querySelector('.toggle button:first-child').classList.add('active');
-map.invalidateSize(); // Extra call for initial render
+window.onload = function() {
+    initCharts('assembly2021');
+    updateChart('assembly2021');
+};

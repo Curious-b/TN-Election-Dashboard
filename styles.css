@@ -48,8 +48,9 @@ button:active {
 
 .controls {
     justify-self: center;
-    display: block;
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
     gap: 10px;
     padding: 20px;
@@ -62,7 +63,7 @@ button:active {
 
 .toggle {
     justify-self: center;
-    display: block;
+    display: flex;
     gap: 20px;
 }
 
@@ -98,13 +99,13 @@ button:active {
     top: 0;
     left: -100%;
     width: 100%;
-    height: 5px;
+    height: 8px;
     background: linear-gradient(90deg, #00BFFF, transparent, #FF4500);
-    /*z-index: 0;*/
+    z-index: 0;
     /*transform: skew(2deg, 2deg);*/
     animation: animate1 2s linear infinite;
     animation-delay: 0s;
-    filter: blur(1px);
+    filter: blur(2px);
 }
 
 @keyframes animate1 {
@@ -122,11 +123,12 @@ button:active {
     bottom: 0;
     right: -100%;
     width: 100%;
-    height: 5px;
+    height: 8px;
     background: linear-gradient(270deg, #00BFFF, transparent, #FF4500);
+    z-index: 0;
     animation: animate3 2s linear infinite;
     animation-delay: 1s;
-    filter: blur(1px);
+    filter: blur(2px);
 }
 
 @keyframes animate3 {
@@ -143,12 +145,13 @@ button:active {
     position: absolute;
     top: -100%;
     right: 0;
-    width: 5px;
+    width: 8px;
     height: 100%;
     background: linear-gradient(180deg, #00BFFF, transparent, #FF4500);
+    z-index: 0;
     animation: animate2 2s linear infinite;
     animation-delay: 0.5s;
-    filter: blur(1px);
+    filter: blur(2px);
 }
 
 @keyframes animate2 {
@@ -165,12 +168,13 @@ button:active {
     position: absolute;
     bottom: -100%;
     left: 0;
-    width: 5px;
+    width: 8px;
     height: 100%;
     background: linear-gradient(360deg, #00BFFF, transparent, #FF4500);
+    z-index: 0;
     animation: animate4 2s linear infinite;
     animation-delay: 1.5s;
-    filter: blur(1px);
+    filter: blur(2px);
 }
 
 @keyframes animate4 {
@@ -209,4 +213,34 @@ button:active {
 
 .reset-button:hover {
     background-color: rgba(231, 76, 60, 1);
+}
+
+/* New styles for chart areas with glassmorphism */
+.chart-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px;
+}
+
+.chart-area {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1); /* Semi-transparent white */
+    backdrop-filter: blur(10px); /* Glassmorphism blur */
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    text-align: center;
+}
+
+.chart-area h3 {
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+.seats-chart canvas,
+.vote-chart canvas {
+    width: 100%;
+    height: 300px !important; /* Fixed height to match both charts */
 }
