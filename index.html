@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Tamil Nadu Election Dashboard</h1>
-    <p>Data from Election Commission of India</p>
+    <p>Explore the Election Results through the years!</p>
     <div class="controls">
         <button onclick="updateChart('assembly2011')">2011 AE</button>
         <button onclick="updateChart('assembly2016')">2016 AE</button>
@@ -17,10 +17,6 @@
         <button onclick="updateChart('lokSabha2014')">2014 GE</button>
         <button onclick="updateChart('lokSabha2019')">2019 GE</button>
         <button onclick="updateChart('lokSabha2024')">2024 GE</button>
-        <div class="toggle">
-            <button onclick="toggleData('seats')">Seats Won</button>
-            <button onclick="toggleData('vote')">Vote %</button>
-        </div>
     </div>
     <div class="map-container">
         <span></span>
@@ -33,6 +29,10 @@
         </div>
     </div>
     <div class="dashboard">
+        <div class="toggle">
+            <button onclick="toggleData('seats')">Seats Won</button>
+            <button onclick="toggleData('vote')">Vote %</button>
+        </div>
         <h2 id="chartTitle"></h2>
         <canvas id="electionChart"></canvas>
     </div>
