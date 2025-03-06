@@ -140,6 +140,7 @@ function styleFeature(feature, type) {
             }
         }
     }
+    console.log(`Styling ${constituency} as ${party} (${colors.parties[party] || '#95a5a6'})`);
     return {
         color: type === 'lokSabha' ? '#333333' : '#666666',
         weight: type === 'lokSabha' ? 2 : 1,
@@ -164,7 +165,7 @@ function updateTooltip(layer) {
     let voteShare = 'N/A';
     if (winners[currentElection]) {
         for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-            if (constiuencies.includes(constituency)) {
+            if (constituencies.includes(constituency)) {
                 party = p;
                 voteShare = constituencyVoteShares[currentElection]?.[constituency]?.[party] || 'N/A';
                 break;
@@ -225,3 +226,4 @@ function updateMap(election) {
 // Start with 2021 Assembly
 initChart('assembly2021', 'seats');
 document.querySelector('.toggle button:first-child').classList.add('active');
+map.invalidateSize(); // Extra call for initial render
