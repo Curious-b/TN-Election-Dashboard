@@ -93,17 +93,17 @@ button:active {
     right: -8px;
     bottom: -8px;
     border-radius: 19px; /* Adjusted for border thickness */
-    background: linear-gradient(90deg, #00BFFF, transparent, #FF4500, transparent) 0 0 / 400% 100%; /* Blue, transparent, orange, transparent */
+    background: conic-gradient(from 0deg, transparent 0%, #00BFFF 25%, transparent 50%, #FF4500 75%, transparent 100%);
     animation: traceGlow 3s linear infinite; /* Clockwise tracing */
     z-index: -1;
 }
 
 @keyframes traceGlow {
     0% {
-        background-position: 100% 50%; /* Start with orange */
+        transform: rotate(0deg);
     }
     100% {
-        background-position: 0% 50%; /* End with blue */
+        transform: rotate(360deg);
     }
 }
 
