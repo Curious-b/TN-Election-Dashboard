@@ -95,21 +95,32 @@ button:active {
     height: 100%;
     border-radius: 15px;
     background: linear-gradient(90deg, #00BFFF 0%, transparent 33%, #FF4500 66%, transparent 100%) border-box;
-    background-size: 400% 100%; /* Four segments for tracing */
+    background-size: 100% 8px; /* Thin horizontal strip */
     animation: tracePerimeter 3s linear infinite; /* Clockwise tracing */
     z-index: -1;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); /* Mask to confine glow to border */
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); /* Safari support */
-    mask-composite: exclude; /* Ensure glow is only on edges */
-    -webkit-mask-composite: xor; /* Safari support */
+    /* Clip to perimeter using multiple clip-paths for each side */
+    clip-path: polygon(
+        0% 8px, 8px 8px, 8px 0%, 100% 0%, 100% 8px, calc(100% - 8px) 8px,
+        calc(100% - 8px) 100%, 100% 100%, 100% calc(100% - 8px), 8px calc(100% - 8px),
+        8px 100%, 0% 100%, 0% calc(100% - 8px)
+    );
 }
 
 @keyframes tracePerimeter {
     0% {
-        background-position: 100% 0; /* Start with orange */
+        background-position: 100% 0%; /* Start with orange at top-right */
+    }
+    25% {
+        background-position: 0% 0%; /* Blue at top-left */
+    }
+    50% {
+        background-position: 0% 100%; /* Orange at bottom-left */
+    }
+    75% {
+        background-position: 100% 100%; /* Blue at bottom-right */
     }
     100% {
-        background-position: 0% 0; /* End with blue */
+        background-position: 100% 0%; /* Back to orange at top-right */
     }
 }
 
