@@ -85,8 +85,9 @@ function toggleData(mode) {
 // Initialize single map
 let lokSabhaLayer, assemblyLayer;
 const map = L.map('map-front', { zoomControl: true }).setView([11.1271, 78.6569], 7);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
+L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '© CartoDB',
+    maxZoom: 19
 }).addTo(map);
 
 // Reset map view function
@@ -98,25 +99,34 @@ function resetMapView() {
     }
 }
 
-// Load GeoJSON
-fetch('tamilnadu_constiuencies.geojson')
+// Load GeoJSON with detailed debugging
+fetch('tamilnadu_constituencies.geojson')
     .then(response => {
-        if (!response.ok) throw new Error('Lok Sabha GeoJSON fetch failed: ' + response.status);
+        if (!response.ok) {
+            console.error('Lok Sabha GeoJSON fetch failed:', response.status, response.statusText);
+            throw new Error('Lok Sabha GeoJSON fetch failed: ' + response.status);
+        }
         return response.json();
     })
     .then(data => {
-        console.log('Lok Sabha GeoJSON loaded:', data.features.length, 'features');
+        console.log('Lok Sabha GeoJSON loaded successfully:', data.features.length, 'features');
+        console.log('Sample feature:', data.features[0].properties);
         lokSabhaLayer = L.geoJSON(data, { style: feature => styleFeature(feature, 'lokSabha'), onEachFeature });
         return fetch('tamilnadu_assembly.geojson');
     })
     .then(response => {
-        if (!response.ok) throw new Error('Assembly GeoJSON fetch failed: ' + response.status);
+        if (!response.ok) {
+            console.error('Assembly GeoJSON fetch failed:', response.status, response.statusText);
+            throw new Error('Assembly GeoJSON fetch failed: ' + response.status);
+        }
         return response.json();
     })
     .then(data => {
-        console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
+        console.log('Assembly GeoJSON loaded successfully:', data.features.length, 'features');
+        console.log('Sample feature:', data.features[0].properties);
         assemblyLayer = L.geoJSON(data, { style: feature => styleFeature(feature, 'assembly'), onEachFeature });
         assemblyLayer.addTo(map); // Initial load
+        console.log('Assembly layer added to map:', map.hasLayer(assemblyLayer));
         map.fitBounds(assemblyLayer.getBounds());
         map.invalidateSize();
         document.querySelector('.dashboard').appendChild(Object.assign(document.createElement('button'), {
@@ -126,7 +136,19 @@ fetch('tamilnadu_constiuencies.geojson')
         }));
         updateMap('assembly2021'); // Ensure initial state
     })
-    .catch(err => console.error('GeoJSON error:', err));
+    .catch(err => {
+        console.error('GeoJSON loading error:', err.message);
+        // Fallback: Add a dummy layer to test map rendering
+        L.geoJSON({
+            type: 'FeatureCollection',
+            features: [{
+                type: 'Feature',
+                geometry: { type: 'Polygon', coordinates: [[[78.0, 10.0], [79.0, 10.0], [79.0, 11.0], [78.0, 11.0], [78.0, 10.0]]] },
+                properties: { assembly_c: 'Test Area' }
+            }]
+        }, { style: { color: '#ff0000', fillColor: '#ff0000', fillOpacity: 0.5 } }).addTo(map);
+        map.invalidateSize();
+    });
 
 // Style function
 function styleFeature(feature, type) {
@@ -142,7 +164,7 @@ function styleFeature(feature, type) {
     }
     console.log(`Styling ${constituency} as ${party} (${colors.parties[party] || '#95a5a6'})`);
     return {
-        color: type === 'lokSabha' ? '#333333' : '#666666',
+        color: type === 'lokSabha' ? '#ffffff' : '#cccccc', // Lighter boundaries for dark theme
         weight: type === 'lokSabha' ? 2 : 1,
         fillColor: colors.parties[party] || '#95a5a6',
         fillOpacity: 0.7
@@ -209,6 +231,10 @@ function updateMap(election) {
         map.fitBounds(assemblyLayer.getBounds());
     }
     map.invalidateSize();
+    console.log('Current layers:', {
+        lokSabha: map.hasLayer(lokSabhaLayer),
+        assembly: map.hasLayer(assemblyLayer)
+    });
 
     // Radial gradient animation
     const mapCard = document.querySelector('.map-card');
