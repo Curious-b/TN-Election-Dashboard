@@ -106,7 +106,7 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .then(data => {
         console.log('Lok Sabha GeoJSON loaded:', data.features.length, 'features');
-        lokSabhaLayer = L.geoJSON(data, { style: styleFeature('lokSabha'), onEachFeature });
+        lokSabhaLayer = L.geoJSON(data, { style: feature => styleFeature(feature, 'lokSabha'), onEachFeature });
         return fetch('tamilnadu_assembly.geojson');
     })
     .then(response => {
@@ -115,7 +115,7 @@ fetch('tamilnadu_constituencies.geojson')
     })
     .then(data => {
         console.log('Assembly GeoJSON loaded:', data.features.length, 'features');
-        assemblyLayer = L.geoJSON(data, { style: styleFeature('assembly'), onEachFeature });
+        assemblyLayer = L.geoJSON(data, { style: feature => styleFeature(feature, 'assembly'), onEachFeature });
         assemblyLayer.addTo(map); // Initial load
         map.fitBounds(assemblyLayer.getBounds());
         map.invalidateSize();
@@ -129,24 +129,22 @@ fetch('tamilnadu_constituencies.geojson')
     .catch(err => console.error('GeoJSON error:', err));
 
 // Style function
-function styleFeature(type) {
-    return feature => {
-        const constituency = feature.properties[type === 'lokSabha' ? 'parliame_1' : 'assembly_c'];
-        let party = 'Others';
-        if (winners[currentElection] && currentElection.startsWith(type)) {
-            for (const [p, constituencies] of Object.entries(winners[currentElection])) {
-                if (constituencies.includes(constituency)) {
-                    party = p;
-                    break;
-                }
+function styleFeature(feature, type) {
+    const constituency = feature.properties[type === 'lokSabha' ? 'parliame_1' : 'assembly_c'];
+    let party = 'Others';
+    if (winners[currentElection]) {
+        for (const [p, constituencies] of Object.entries(winners[currentElection])) {
+            if (constituencies.includes(constituency)) {
+                party = p;
+                break;
             }
         }
-        return {
-            color: type === 'lokSabha' ? '#333333' : '#666666',
-            weight: type === 'lokSabha' ? 2 : 1,
-            fillColor: colors.parties[party],
-            fillOpacity: 0.7
-        };
+    }
+    return {
+        color: type === 'lokSabha' ? '#333333' : '#666666',
+        weight: type === 'lokSabha' ? 2 : 1,
+        fillColor: colors.parties[party] || '#95a5a6', // Fallback color
+        fillOpacity: 0.7
     };
 }
 
@@ -182,22 +180,21 @@ function updateTooltip(layer) {
 
 // Update map with flip transition
 function updateMap(election) {
-    console.log(`Updating map for ${election}, currentElection: ${currentElection}`);
+    console.log(`Updating map for ${election}, previous: ${currentElection}`);
     if (!lokSabhaLayer || !assemblyLayer) {
         console.log('Layers not loaded yet');
         return;
     }
 
-    // Update currentElection
-    currentElection = election;
+    currentElection = election; // Set immediately
     const isLokSabha = election.startsWith('lokSabha');
 
-    // Prepare map
+    // Update layers
     if (isLokSabha) {
         if (map.hasLayer(assemblyLayer)) map.removeLayer(assemblyLayer);
         if (!map.hasLayer(lokSabhaLayer)) lokSabhaLayer.addTo(map);
         lokSabhaLayer.eachLayer(layer => {
-            layer.setStyle(styleFeature('lokSabha'));
+            layer.setStyle(styleFeature(layer.feature, 'lokSabha'));
             updateTooltip(layer);
         });
         map.fitBounds(lokSabhaLayer.getBounds());
@@ -205,7 +202,7 @@ function updateMap(election) {
         if (map.hasLayer(lokSabhaLayer)) map.removeLayer(lokSabhaLayer);
         if (!map.hasLayer(assemblyLayer)) assemblyLayer.addTo(map);
         assemblyLayer.eachLayer(layer => {
-            layer.setStyle(styleFeature('assembly'));
+            layer.setStyle(styleFeature(layer.feature, 'assembly'));
             updateTooltip(layer);
         });
         map.fitBounds(assemblyLayer.getBounds());
