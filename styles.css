@@ -87,15 +87,13 @@ button:active {
 
 .map-container {
     margin: 15px auto;
-    padding: 2em;
     width: 100%;
     max-width: 650px;
     height: 50vh;
     position: relative;
     background: #2a2a2a;
-    text-align: center;
     border-radius: 15px;
-    box-sizing: border-box;
+    box-sizing: content-box;
 }
 
 @property --angle {
