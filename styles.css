@@ -86,107 +86,50 @@ button:active {
 }
 
 .map-container {
+    margin: 15px auto;
+    padding: 2em;
     width: 100%;
     max-width: 650px;
     height: 50vh;
-    margin: 15px auto;
     position: relative;
-    border-radius: 15px;
     background: #2a2a2a;
-    overflow: hidden;
-    padding: 8px;
+    text-align: center;
+    border-radius: 15px;
     box-sizing: border-box;
 }
 
-.map-container span:nth-child(1) {
+@property --angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.map-container::after, .map-container::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 8px;
-    background: linear-gradient(90deg, #00BFFF, transparent, #FF4500);
-    z-index: 0;
-    animation: animate1 2s linear infinite;
-    animation-delay: 0s;
-    filter: blur(2px);
-}
-
-@keyframes animate1 {
-    0% {
-        left: -100%;
-    }
-    50%, 100% {
-        left: 100%;
-    }
-}
-
-.map-container span:nth-child(3) {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    right: -100%;
-    width: 100%;
-    height: 8px;
-    background: linear-gradient(270deg, #00BFFF, transparent, #FF4500);
-    z-index: 0;
-    animation: animate3 2s linear infinite;
-    animation-delay: 1s;
-    filter: blur(2px);
-}
-
-@keyframes animate3 {
-    0% {
-        right: -100%;
-    }
-    50%, 100% {
-        right: 100%;
-    }
-}
-
-.map-container span:nth-child(2) {
-    content: '';
-    position: absolute;
-    top: -100%;
-    right: 0;
-    width: 8px;
     height: 100%;
-    background: linear-gradient(180deg, #00BFFF, transparent, #FF4500);
-    z-index: 0;
-    animation: animate2 2s linear infinite;
-    animation-delay: 0.5s;
-    filter: blur(2px);
+    width: 100%;
+    background: conic-gradient(from var(--angle), #ff0000, #ff00ff, #0000ff, #00ffff, #00ff00, #ffff00, #ff0000);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    border-radius: 15px;
+    z-index: -1;
+    padding: 3px;
+    animation: 3s spin linear infinite;
 }
 
-@keyframes animate2 {
-    0% {
-        top: -100%;
-    }
-    50%, 100% {
-        top: 100%;
-    }
+.map-container::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
 }
 
-.map-container span:nth-child(4) {
-    content: '';
-    position: absolute;
-    bottom: -100%;
-    left: 0;
-    width: 8px;
-    height: 100%;
-    background: linear-gradient(360deg, #00BFFF, transparent, #FF4500);
-    z-index: 0;
-    animation: animate4 2s linear infinite;
-    animation-delay: 1.5s;
-    filter: blur(2px);
-}
-
-@keyframes animate4 {
-    0% {
-        bottom: -100%;
+@keyframes spin {
+    from {
+        --angle: 0deg;
     }
-    50%, 100% {
-        bottom: 100%;
+    to {
+        --angle: 360deg;
     }
 }
 
@@ -195,13 +138,13 @@ button:active {
     height: 100%;
     margin: 0 auto;
     position: relative;
-    border-radius: 14px;
+    border-radius: 15px;
 }
 
 .map-front {
     width: 100%;
     height: 100%;
-    border-radius: 14px;
+    border-radius: 15px;
 }
 
 .map-back {
@@ -227,39 +170,12 @@ button:active {
     position: relative; /* For ::before positioning */
 }
 
-/* Animated background behind the chart areas */
-.chart-container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
-    background-size: 200% 200%;
-    animation: shimmer 10s ease infinite;
-    z-index: -1; /* Behind the chart areas */
-    opacity: 0.6; /* Subtle effect */
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: 0% 0%;
-    }
-    50% {
-        background-position: 100% 100%;
-    }
-    100% {
-        background-position: 0% 0%;
-    }
-}
-
 /* Chart areas with highlight bar and enhanced glassmorphism */
 .chart-area {
     flex: 1;
     position: relative;
     background: rgba(255, 255, 255, 0.08); /* Slightly higher opacity for contrast */
-    backdrop-filter: blur(18px); /* Increased blur for more glassiness */
+    backdrop-filter: blur(1px);
     border-radius: 15px;
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06); /* Stronger shadows */
     padding: 10px;
@@ -343,10 +259,7 @@ button:active {
         gap: 10px;
         padding: 10px;
     }
-    .chart-container::before {
-        background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
-        background-size: 200% 200%;
-        animation: shimmer 10s ease infinite;
+
     }
     .chart-area {
         padding: 8px;
@@ -367,4 +280,3 @@ button:active {
     .reset-button {
         margin: 5px auto;
     }
-}
