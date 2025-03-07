@@ -1,7 +1,7 @@
 body {
     margin: 0;
     padding: 0;
-    background: #1a1a1a;
+    background: linear-gradient(180deg, #ab20fd 0%, #2d2d2d 30%, #000000 50%, #2d2d2d 70%, #7d12ff 90%, #200589 100%);
     font-family: Arial, sans-serif;
     overflow-x: hidden;
 }
@@ -94,8 +94,8 @@ button:active {
     border-radius: 15px;
     background: #2a2a2a;
     overflow: hidden;
-    padding: 8px; /* Add padding to account for the 8px gradient tracing */
-    box-sizing: border-box; /* Ensure padding doesn't increase the overall size */
+    padding: 8px;
+    box-sizing: border-box;
 }
 
 .map-container span:nth-child(1) {
@@ -193,7 +193,7 @@ button:active {
 .map-card {
     width: 100%;
     height: 100%;
-    margin: 0 auto; /* Center the map-card */
+    margin: 0 auto;
     position: relative;
     border-radius: 14px;
 }
@@ -218,35 +218,96 @@ button:active {
     background-color: rgba(231, 76, 60, 1);
 }
 
-/* Chart areas with glassmorphism */
+/* Chart container with animated background behind chart areas */
 .chart-container {
     display: flex;
     justify-content: space-between;
     gap: 15px;
     padding: 15px;
+    position: relative; /* For ::before positioning */
 }
 
+/* Animated background behind the chart areas */
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
+    background-size: 200% 200%;
+    animation: shimmer 10s ease infinite;
+    z-index: -1; /* Behind the chart areas */
+    opacity: 0.6; /* Subtle effect */
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+
+/* Chart areas with highlight bar and enhanced glassmorphism */
 .chart-area {
     flex: 1;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
+    position: relative;
+    background: rgba(255, 255, 255, 0.08); /* Slightly higher opacity for contrast */
+    backdrop-filter: blur(18px); /* Increased blur for more glassiness */
     border-radius: 15px;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06); /* Stronger shadows */
     padding: 10px;
     text-align: center;
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+/* Highlight bar animation */
+.chart-area::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 40%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    animation: highlight 6s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes highlight {
+    0% {
+        left: -100%;
+    }
+    50% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 .chart-area h3 {
     color: #ffffff;
     margin-bottom: 5px;
-    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.4);
     font-size: 1.2em;
+    position: relative;
+    z-index: 1;
 }
 
 .seats-chart canvas,
 .vote-chart canvas {
     width: 100%;
     height: 300px !important;
+    position: relative;
+    z-index: 1;
 }
 
 @media (max-width: 600px) {
@@ -275,15 +336,26 @@ button:active {
     .map-container {
         height: 40vh;
         margin: 10px auto;
-        padding: 8px; /* Maintain padding for gradient tracing */
+        padding: 8px;
     }
     .chart-container {
         flex-direction: column;
         gap: 10px;
         padding: 10px;
     }
+    .chart-container::before {
+        background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
+        background-size: 200% 200%;
+        animation: shimmer 10s ease infinite;
+    }
     .chart-area {
         padding: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(18px);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06);
+    }
+    .chart-area::before {
+        animation: highlight 6s ease-in-out infinite;
     }
     .chart-area h3 {
         font-size: 1em;
