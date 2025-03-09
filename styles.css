@@ -12,12 +12,17 @@ h1 {
     text-align: center;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     font-size: 2em;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.2s;
 }
 
 p {
     color: #cccccc;
     text-align: center;
     font-size: 1em;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.4s;
 }
 
 h2 {
@@ -25,6 +30,9 @@ h2 {
     text-align: center;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     font-size: 1.5em;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.4s;
 }
 
 button {
@@ -37,6 +45,8 @@ button {
     background-color: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(2.5px);
     transition: all 0.3s ease;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.4s;
 }
 
 button:hover {
@@ -211,7 +221,7 @@ button:active {
     flex: 1;
     position: relative;
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(18px);
     border-radius: 15px;
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06);
     padding: 10px;
@@ -258,6 +268,9 @@ button:active {
     font-size: 1.2em;
     position: relative;
     z-index: 1;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards;
+    animation-delay: 0.6s;
 }
 
 .seats-chart canvas,
@@ -283,7 +296,7 @@ button:active {
     border-radius: 50%;
     box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
     animation: float 15s infinite linear;
-    z-index: 0; /* Behind content but above background */
+    z-index: 0;
     opacity: 0.7;
 }
 
@@ -298,6 +311,18 @@ button:active {
     100% {
         transform: translate(100vw, 100vh);
         opacity: 0;
+    }
+}
+
+/* Fade-in animation for titles */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
