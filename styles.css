@@ -83,6 +83,9 @@ button:active {
     backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    opacity: 0; /* Initial state for scroll animation */
+    transform: translateY(20px); /* Slightly shifted down */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
 }
 
 .map-container {
@@ -94,6 +97,9 @@ button:active {
     background: #2a2a2a;
     border-radius: 15px;
     box-sizing: content-box;
+    opacity: 0; /* Initial state for scroll animation */
+    transform: translateY(20px); /* Slightly shifted down */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
 }
 
 @property --angle {
@@ -102,7 +108,8 @@ button:active {
     inherits: false;
 }
 
-.map-container::after, .map-container::before {
+.map-container::after,
+.map-container::before {
     content: '';
     position: absolute;
     height: 100%;
@@ -166,14 +173,44 @@ button:active {
     gap: 15px;
     padding: 15px;
     position: relative; /* For ::before positioning */
+    opacity: 0; /* Initial state for scroll animation */
+    transform: translateY(20px); /* Slightly shifted down */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
+}
+
+/* Animated background behind the chart areas */
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
+    background-size: 200% 200%;
+    animation: shimmer 10s ease infinite;
+    z-index: -1; /* Behind the chart areas */
+    opacity: 0.6; /* Subtle effect */
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
 }
 
 /* Chart areas with highlight bar and enhanced glassmorphism */
 .chart-area {
     flex: 1;
     position: relative;
-    background: rgba(255, 255, 255, 0.08); /* Slightly higher opacity for contrast */
-    backdrop-filter: blur(1px);
+    background: rgba(255, 255, 255, 0.08); /* Higher opacity for contrast */
+    backdrop-filter: blur(18px); /* Enhanced glassiness */
     border-radius: 15px;
     box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06); /* Stronger shadows */
     padding: 10px;
@@ -224,6 +261,12 @@ button:active {
     z-index: 1;
 }
 
+/* Class to trigger scroll animation */
+.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 @media (max-width: 600px) {
     h1 {
         font-size: 1.5em;
@@ -257,7 +300,10 @@ button:active {
         gap: 10px;
         padding: 10px;
     }
-
+    .chart-container::before {
+        background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
+        background-size: 200% 200%;
+        animation: shimmer 10s ease infinite;
     }
     .chart-area {
         padding: 8px;
@@ -278,3 +324,4 @@ button:active {
     .reset-button {
         margin: 5px auto;
     }
+}
