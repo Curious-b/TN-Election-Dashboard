@@ -4,6 +4,7 @@ body {
     background: linear-gradient(180deg, #ab20fd 0%, #2d2d2d 30%, #000000 50%, #2d2d2d 70%, #7d12ff 90%, #200589 100%);
     font-family: Arial, sans-serif;
     overflow-x: hidden;
+    position: relative; /* For positioning particles */
 }
 
 h1 {
@@ -83,9 +84,9 @@ button:active {
     backdrop-filter: blur(10px);
     border-radius: 15px;
     box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-    opacity: 0; /* Initial state for scroll animation */
-    transform: translateY(20px); /* Slightly shifted down */
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 .map-container {
@@ -97,9 +98,9 @@ button:active {
     background: #2a2a2a;
     border-radius: 15px;
     box-sizing: content-box;
-    opacity: 0; /* Initial state for scroll animation */
-    transform: translateY(20px); /* Slightly shifted down */
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 @property --angle {
@@ -172,10 +173,10 @@ button:active {
     justify-content: space-between;
     gap: 15px;
     padding: 15px;
-    position: relative; /* For ::before positioning */
-    opacity: 0; /* Initial state for scroll animation */
-    transform: translateY(20px); /* Slightly shifted down */
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Smooth transition */
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
 }
 
 /* Animated background behind the chart areas */
@@ -189,8 +190,8 @@ button:active {
     background: linear-gradient(45deg, rgba(171, 32, 253, 0.05), rgba(255, 255, 255, 0.1), rgba(125, 18, 255, 0.05));
     background-size: 200% 200%;
     animation: shimmer 10s ease infinite;
-    z-index: -1; /* Behind the chart areas */
-    opacity: 0.6; /* Subtle effect */
+    z-index: -1;
+    opacity: 0.6;
 }
 
 @keyframes shimmer {
@@ -205,18 +206,24 @@ button:active {
     }
 }
 
-/* Chart areas with highlight bar and enhanced glassmorphism */
+/* Chart areas with highlight bar, hover animation, and enhanced glassmorphism */
 .chart-area {
     flex: 1;
     position: relative;
-    background: rgba(255, 255, 255, 0.08); /* Higher opacity for contrast */
-    backdrop-filter: blur(18px); /* Enhanced glassiness */
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
     border-radius: 15px;
-    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06); /* Stronger shadows */
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06);
     padding: 10px;
     text-align: center;
     transition: all 0.3s ease;
     overflow: hidden;
+}
+
+.chart-area:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
 }
 
 /* Highlight bar animation */
@@ -267,6 +274,33 @@ button:active {
     transform: translateY(0);
 }
 
+/* Floating particles effect */
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+    animation: float 15s infinite linear;
+    z-index: 0; /* Behind content but above background */
+    opacity: 0.7;
+}
+
+@keyframes float {
+    0% {
+        transform: translate(0, 0);
+        opacity: 0.7;
+    }
+    50% {
+        opacity: 0.3;
+    }
+    100% {
+        transform: translate(100vw, 100vh);
+        opacity: 0;
+    }
+}
+
 @media (max-width: 600px) {
     h1 {
         font-size: 1.5em;
@@ -310,6 +344,10 @@ button:active {
         background: rgba(255, 255, 255, 0.08);
         backdrop-filter: blur(18px);
         box-shadow: 0 0 25px rgba(255, 255, 255, 0.2), inset 0 0 12px rgba(255, 255, 255, 0.06);
+    }
+    .chart-area:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
     }
     .chart-area::before {
         animation: highlight 6s ease-in-out infinite;

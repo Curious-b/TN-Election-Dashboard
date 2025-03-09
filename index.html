@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Floating Particles -->
+    <div class="particle" style="left: 5%; top: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="left: 15%; top: 30%; animation-delay: 2s;"></div>
+    <div class="particle" style="left: 25%; top: 50%; animation-delay: 4s;"></div>
+    <div class="particle" style="left: 35%; top: 20%; animation-delay: 6s;"></div>
+    <div class="particle" style="left: 45%; top: 40%; animation-delay: 8s;"></div>
+    <div class="particle" style="left: 55%; top: 60%; animation-delay: 10s;"></div>
+    <div class="particle" style="left: 65%; top: 15%; animation-delay: 12s;"></div>
+    <div class="particle" style="left: 75%; top: 35%; animation-delay: 14s;"></div>
+    <div class="particle" style="left: 85%; top: 55%; animation-delay: 16s;"></div>
+    <div class="particle" style="left: 95%; top: 25%; animation-delay: 18s;"></div>
+
     <h1>Tamil Nadu Election Dashboard</h1>
     <p>Explore the Election Results through the years!</p>
     <div class="controls">
@@ -21,7 +33,7 @@
     <div class="map-container">
         <div class="map-card">
             <div class="map-front" id="map-front"></div>
-            <div class="map-back" style="background: #ccc;"></div> <!-- Optional: style as needed -->
+            <div class="map-back" style="background: #ccc;"></div>
         </div>
     </div>
     <div class="dashboard">
@@ -43,22 +55,15 @@
     <script src="script.js"></script>
     <!-- Scroll Animation Script -->
     <script>
-        // Select elements to animate
         const elementsToAnimate = document.querySelectorAll('.map-container, .dashboard, .chart-container');
-
-        // IntersectionObserver to detect when elements come into view
         const observer = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); // Stop observing once animated
+                    observer.unobserve(entry.target);
                 }
             });
-        }, {
-            threshold: 0.2 // Trigger when 20% of the element is visible
-        });
-
-        // Observe each element
+        }, { threshold: 0.2 });
         elementsToAnimate.forEach(element => {
             observer.observe(element);
         });
